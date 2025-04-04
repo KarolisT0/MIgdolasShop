@@ -1,9 +1,8 @@
 from django.contrib import admin
-from django import forms
 from .models import Product, ProductImage, ProductVariant, Order, OrderItem
-from .forms import MultiImageForm  # ✅ Import the helper form
 
 
+# -------- ORDER ADMIN --------
 class OrderItemInline(admin.TabularInline):
     model = OrderItem
     extra = 0
@@ -22,23 +21,10 @@ class OrderAdmin(admin.ModelAdmin):
         return sum(item.price * item.quantity for item in obj.items.all())
 
 
+# -------- PRODUCT ADMIN --------
 class ProductImageInline(admin.StackedInline):
     model = ProductImage
-    form = MultiImageForm
-    extra = 0
-
-    def get_formset(self, request, obj=None, **kwargs):
-        formset = super().get_formset(request, obj, **kwargs)
-
-        class WrappedFormSet(formset):
-            def save_new(self, form, commit=True):
-                images = request.FILES.getlist('images')
-                instances = []
-                for image in images:
-                    instances.append(ProductImage.objects.create(product=obj, image=image))
-                return instances
-
-        return WrappedFormSet
+    extra = 1
 
 
 class ProductVariantInline(admin.TabularInline):
@@ -46,8 +32,7 @@ class ProductVariantInline(admin.TabularInline):
     extra = 1
 
 
+@admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
+    list_display = ['name', 'price']
     inlines = [ProductImageInline, ProductVariantInline]
-
-
-admin.site.register(Product, ProductAdmin)

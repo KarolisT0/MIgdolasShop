@@ -1,5 +1,3 @@
-import string
-import random
 import time
 from django.db import models, IntegrityError
 from django.utils import timezone
@@ -7,6 +5,9 @@ from django.utils.crypto import get_random_string
 from tinymce.models import HTMLField
 
 
+# -------------------
+# Product
+# -------------------
 class Product(models.Model):
     name = models.CharField(max_length=255)
     slug = models.SlugField(unique=True)
@@ -20,11 +21,20 @@ class Product(models.Model):
         return self.name
 
 
+# -------------------
+# Product Images
+# -------------------
 class ProductImage(models.Model):
     product = models.ForeignKey(Product, related_name="images", on_delete=models.CASCADE)
     image = models.ImageField(upload_to="products/")
 
+    def __str__(self):
+        return f"Image for {self.product.name}"
 
+
+# -------------------
+# Product Variants
+# -------------------
 class ProductVariant(models.Model):
     product = models.ForeignKey(Product, related_name='variants', on_delete=models.CASCADE)
     name = models.CharField(max_length=100)  # e.g. "2.5S", "Banketė"
@@ -35,6 +45,9 @@ class ProductVariant(models.Model):
         return f"{self.name} - {self.size} - {self.price} €"
 
 
+# -------------------
+# Order
+# -------------------
 class Order(models.Model):
     order_number = models.CharField(max_length=30, unique=True, blank=True)
     name = models.CharField(max_length=100)
@@ -48,15 +61,14 @@ class Order(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.order_number:
-            for attempt in range(5):
-                order_number = self.generate_order_number()
-                if not Order.objects.filter(order_number=order_number).exists():
-                    self.order_number = order_number
+            for _ in range(5):
+                candidate = self.generate_order_number()
+                if not Order.objects.filter(order_number=candidate).exists():
+                    self.order_number = candidate
                     break
                 time.sleep(0.1)
             else:
                 self.order_number = f"ORD{timezone.now().strftime('%Y%m%d%H%M%S%f')}"
-
         try:
             super().save(*args, **kwargs)
         except IntegrityError:
@@ -65,13 +77,13 @@ class Order(models.Model):
 
     def generate_order_number(self):
         date_str = timezone.now().strftime("%Y%m%d")
-        while True:
-            random_str = get_random_string(length=5, allowed_chars='ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789')
-            order_number = f"ORD{date_str}{random_str}"
-            if not Order.objects.filter(order_number=order_number).exists():
-                return order_number
+        random_str = get_random_string(length=5, allowed_chars='ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789')
+        return f"ORD{date_str}{random_str}"
 
 
+# -------------------
+# Order Item
+# -------------------
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, related_name='items', on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
