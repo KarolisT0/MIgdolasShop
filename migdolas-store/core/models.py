@@ -7,7 +7,6 @@ from django.utils.crypto import get_random_string
 from tinymce.models import HTMLField
 
 
-
 class Product(models.Model):
     name = models.CharField(max_length=255)
     slug = models.SlugField(unique=True)
@@ -19,18 +18,22 @@ class Product(models.Model):
 
     def __str__(self):
         return self.name
-    
+
+
 class ProductImage(models.Model):
-    product = models.ForeignKey(Product, related_name='images', on_delete=models.CASCADE)
-    image = models.ImageField(upload_to='products/gallery/')
+    product = models.ForeignKey(Product, related_name="images", on_delete=models.CASCADE)
+    image = models.ImageField(upload_to="products/")
+
 
 class ProductVariant(models.Model):
     product = models.ForeignKey(Product, related_name='variants', on_delete=models.CASCADE)
     name = models.CharField(max_length=100)  # e.g. "2.5S", "Banketė"
     size = models.CharField(max_length=100)  # e.g. "200x90x75"
     price = models.DecimalField(max_digits=10, decimal_places=2)
+
     def __str__(self):
         return f"{self.name} - {self.size} - {self.price} €"
+
 
 class Order(models.Model):
     order_number = models.CharField(max_length=30, unique=True, blank=True)
@@ -45,14 +48,13 @@ class Order(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.order_number:
-            for attempt in range(5):  # Try up to 5 times
+            for attempt in range(5):
                 order_number = self.generate_order_number()
                 if not Order.objects.filter(order_number=order_number).exists():
                     self.order_number = order_number
                     break
                 time.sleep(0.1)
             else:
-                # Fallback: full timestamp-based number
                 self.order_number = f"ORD{timezone.now().strftime('%Y%m%d%H%M%S%f')}"
 
         try:

@@ -1,5 +1,7 @@
 from django.contrib import admin
+from django import forms
 from .models import Product, ProductImage, ProductVariant, Order, OrderItem
+from .forms import MultiImageForm  # ✅ Import the helper form
 
 
 class OrderItemInline(admin.TabularInline):
@@ -11,27 +13,41 @@ class OrderItemInline(admin.TabularInline):
 
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', 'email', 'created_at', 'total_price')  # Fields visible in the list
-    search_fields = ('id', 'name', 'email', 'phone')  # Fields to search in the admin interface
-    list_display_links = ('id', 'name')  # Make "id" and "name" clickable
+    list_display = ('id', 'name', 'email', 'created_at', 'total_price')
+    search_fields = ('id', 'name', 'email', 'phone')
+    list_display_links = ('id', 'name')
     inlines = [OrderItemInline]
+
     def total_price(self, obj):
         return sum(item.price * item.quantity for item in obj.items.all())
-    
-@admin.register(Product)
-class ProductAdmin(admin.ModelAdmin):
-    list_display = ('name', 'price', 'created_at')
-    prepopulated_fields = {"slug": ("name",)}
 
-class ProductImageInline(admin.TabularInline):
+
+class ProductImageInline(admin.StackedInline):
     model = ProductImage
-    extra = 1
+    form = MultiImageForm
+    extra = 0
+
+    def get_formset(self, request, obj=None, **kwargs):
+        formset = super().get_formset(request, obj, **kwargs)
+
+        class WrappedFormSet(formset):
+            def save_new(self, form, commit=True):
+                images = request.FILES.getlist('images')
+                instances = []
+                for image in images:
+                    instances.append(ProductImage.objects.create(product=obj, image=image))
+                return instances
+
+        return WrappedFormSet
+
 
 class ProductVariantInline(admin.TabularInline):
     model = ProductVariant
     extra = 1
 
+
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ['name', 'price', 'created_at']
-    prepopulated_fields = {"slug": ("name",)}
     inlines = [ProductImageInline, ProductVariantInline]
+
+
+admin.site.register(Product, ProductAdmin)
