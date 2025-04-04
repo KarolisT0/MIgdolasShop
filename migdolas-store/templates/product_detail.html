@@ -10,7 +10,7 @@
         <h2>{{ product.name }}</h2>
         <p>{{ product.description }}</p>
         <h4 class="text-success">€{{ product.price }}</h4>
-        <button class="btn btn-primary mt-3">Add to Cart</button>
+        <a href="{% url 'add_to_cart' product.id %}" class="btn btn-primary">Add to Cart</a>
     </div>
 </div>
 {% endblock %}

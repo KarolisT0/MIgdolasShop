@@ -12,6 +12,7 @@ class Cart:
             self.cart[product_id]['quantity'] += quantity
         else:
             self.cart[product_id] = {
+                'id': product.id,
                 'name': product.name,
                 'price': str(product.price),
                 'quantity': quantity,
