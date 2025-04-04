@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Product, Order, OrderItem
+from .models import Product, Order, OrderItem, ProductImage, ProductVariant
 
 class OrderItemInline(admin.TabularInline):
     model = OrderItem
@@ -30,7 +30,6 @@ class ProductVariantInline(admin.TabularInline):
     model = ProductVariant
     extra = 1
 
-@admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
     list_display = ['name', 'price', 'created_at']
     prepopulated_fields = {"slug": ("name",)}
