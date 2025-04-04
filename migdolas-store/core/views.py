@@ -2,6 +2,8 @@ from django.shortcuts import render, get_object_or_404, redirect
 from .models import Product
 from .cart import Cart
 from django.views.decorators.http import require_POST
+from .forms import CheckoutForm
+from django.contrib import messages
 
 def home(request):
     return render(request, 'home.html')
@@ -41,3 +43,24 @@ def update_cart(request, product_id):
         cart.save()
 
     return redirect('cart_detail')
+
+def checkout(request):
+    cart = Cart(request)
+    if len(cart) == 0:
+        messages.warning(request, "Jūsų krepšelis tuščias.")
+        return redirect('product_list')
+
+    if request.method == 'POST':
+        form = CheckoutForm(request.POST)
+        if form.is_valid():
+            # Optionally save the order here
+            cart.clear()
+            messages.success(request, "Užsakymas pateiktas sėkmingai!")
+            return redirect('home')
+    else:
+        form = CheckoutForm()
+
+    return render(request, 'checkout.html', {
+        'cart': cart,
+        'form': form
+    })

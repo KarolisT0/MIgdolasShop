@@ -39,5 +39,8 @@
         </tbody>
     </table>
     <h4 class="mt-3">Viso: €{{ cart.get_total_price|floatformat:2 }}</h4>
+    <div class="text-end">
+        <a href="{% url 'checkout' %}" class="btn btn-success">Atsiskaityti</a>
+    </div>
 {% endif %}
 {% endblock %}
