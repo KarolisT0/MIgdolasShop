@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import Product
+from .models import Product, Order, OrderItem
 from .cart import Cart
 from django.views.decorators.http import require_POST
 from .forms import CheckoutForm
@@ -47,37 +47,32 @@ def update_cart(request, product_id):
 
 def checkout(request):
     cart = Cart(request)
-    if len(cart) == 0:
-        messages.warning(request, "Jūsų krepšelis tuščias.")
-        return redirect('product_list')
-    
+
     if request.method == 'POST':
         form = CheckoutForm(request.POST)
-        
-    if form.is_valid():
-        order = Order.objects.create(
-            name=form.cleaned_data['name'],
-            email=form.cleaned_data['email'],
-            address=form.cleaned_data['address'],
-            phone=form.cleaned_data['phone']
-        )
-
-        for item in cart:
-            OrderItem.objects.create(
-                order=order,
-                product=item['product_obj'],  # add this to cart class if needed
-                price=item['price'],
-                quantity=item['quantity']
+        if form.is_valid():
+            order = Order.objects.create(
+                name=form.cleaned_data['name'],
+                email=form.cleaned_data['email'],
+                address=form.cleaned_data['address'],
+                phone=form.cleaned_data['phone'],
             )
 
-        cart.clear()
-        messages.success(request, "Užsakymas pateiktas sėkmingai!")
-        return redirect('home')
+            for item in cart:
+                OrderItem.objects.create(
+                    order=order,
+                    product=item['product_obj'],
+                    price=item['price'],
+                    quantity=item['quantity']
+                )
 
+            cart.clear()
+            messages.success(request, "Užsakymas pateiktas sėkmingai!")
+            return redirect('home')
     else:
-        form = CheckoutForm()
+        form = CheckoutForm()  # ✅ define this so it exists for GET
 
     return render(request, 'checkout.html', {
-        'cart': cart,
-        'form': form
+        'form': form,
+        'cart': cart
     })
