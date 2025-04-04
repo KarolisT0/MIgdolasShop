@@ -26,10 +26,11 @@ class ProductImage(models.Model):
 
 class ProductVariant(models.Model):
     product = models.ForeignKey(Product, related_name='variants', on_delete=models.CASCADE)
-    name = models.CharField(max_length=50)  # e.g., "2,5S"
-    dimensions = models.CharField(max_length=50)  # e.g., "199/105/77"
+    name = models.CharField(max_length=100)  # e.g. "2.5S", "Banketė"
+    size = models.CharField(max_length=100)  # e.g. "200x90x75"
     price = models.DecimalField(max_digits=10, decimal_places=2)
-
+    def __str__(self):
+        return f"{self.name} - {self.size} - {self.price} €"
 
 class Order(models.Model):
     order_number = models.CharField(max_length=30, unique=True, blank=True)
