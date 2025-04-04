@@ -35,9 +35,20 @@ def cart_detail(request):
 
 
 def add_to_cart(request, product_id):
-    product = Product.objects.get(id=product_id)
+    product = get_object_or_404(Product, id=product_id)
+    variant_id = request.POST.get('variant_id')
+    
+    # If variants exist, use selected variant
+    if product.variants.exists() and variant_id:
+        variant = product.variants.get(id=variant_id)
+        item_name = f"{product.name} ({variant.name} - {variant.size})"
+        price = variant.price
+    else:
+        item_name = product.name
+        price = product.price
+
     cart = Cart(request)
-    cart.add(product)
+    cart.add(product=product,)
     return redirect('cart_detail')
 
 

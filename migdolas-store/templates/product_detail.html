@@ -12,37 +12,39 @@
   {% endfor %}
 </div>
 
-<p>{{ product.description }}</p>
+<p>{{ product.description|safe }}</p>
+
+<form method="post" action="{% url 'add_to_cart' product.id %}">
+  {% csrf_token %}
+  {% if product.variants.all %}
+    <label for="variant">Pasirinkite variantą:</label>
+    <select name="variant_id" id="variant" required>
+        {% for variant in product.variants.all %}
+            <option value="{{ variant.id }}">
+                {{ variant.name }} - {{ variant.size }} - {{ variant.price }} €
+            </option>
+        {% endfor %}
+    </select>
+  {% endif %}
+  <br><br>
+  <button type="submit">Užsakyti</button>
+</form>
 
 <table>
-  <tr>
-    <th>Variant</th><th>Dimensions</th><th>Price (€)</th>
-  </tr>
-  {% for v in product.variants.all %}
-  <tr>
-    <td>{{ v.name }}</td>
-    <td>{{ v.dimensions }}</td>
-    <td>{{ v.price }}</td>
-  </tr>
-  <form method="post" action="{% url 'add_to_cart' product.id %}">
-    {% csrf_token %}
-    
-    {% if product.variants.all %}
-        <label for="variant">Pasirinkite variantą:</label>
-        <select name="variant_id" id="variant" required>
-            {% for variant in product.variants.all %}
-                <option value="{{ variant.id }}">
-                    {{ variant.name }} - {{ variant.size }} - {{ variant.price }} €
-                </option>
-            {% endfor %}
-        </select>
-    {% endif %}
-
-    <form method="post" action="{% url 'add_to_cart' product.id %}">
-      {% csrf_token %}
-      <button type="submit">Užsakyti</button>
-    </form>
-  {% endfor %}
+  <thead>
+    <tr>
+      <th>Variant</th><th>Dimensions</th><th>Price (€)</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for v in product.variants.all %}
+    <tr>
+      <td>{{ v.name }}</td>
+      <td>{{ v.size }}</td>
+      <td>{{ v.price }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
 </table>
 
 <a href="/contact/" class="btn">Susisiekti</a>
