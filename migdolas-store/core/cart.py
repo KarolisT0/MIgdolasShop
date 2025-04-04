@@ -35,7 +35,8 @@ class Cart:
         self.session.modified = True
 
     def __iter__(self):
-        for item in self.cart.values():
+        for product_id, item in self.cart.items():
+            item['id'] = product_id  # 👈 Add this line
             item['total'] = float(item['price']) * item['quantity']
             yield item
 

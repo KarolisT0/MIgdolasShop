@@ -22,7 +22,13 @@
                     <img src="{{ item.image }}" style="height: 50px;">
                     {{ item.name }}
                 </td>
-                <td>{{ item.quantity }}</td>
+                <td>
+                    <form method="POST" action="{% url 'update_cart' item.id %}">
+                      {% csrf_token %}
+                      <input type="number" name="quantity" value="{{ item.quantity }}" min="1" style="width: 60px;">
+                      <button type="submit" class="btn btn-sm btn-secondary">Atnaujinti</button>
+                    </form>
+                  </td>                  
                 <td>€{{ item.price }}</td>
                 <td>€{{ item.total|floatformat:2 }}</td>
                 <td>
