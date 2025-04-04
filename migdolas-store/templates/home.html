@@ -1,6 +1,30 @@
 {% extends 'base.html' %}
-
 {% block content %}
-    <h1>Welcome to Migdolas Furniture</h1>
-    <p>This is your home page.</p>
+
+<div class="container mt-5">
+  <div class="text-center">
+    <h1 class="mb-4">Sveiki atvykę į Migdolas Baldai!</h1>
+    <a href="{% url 'product_list' %}" class="btn btn-primary btn-lg">Peržiūrėti prekes</a>
+  </div>
+
+  {% if products %}
+  <hr class="my-5">
+  <h3 class="mb-4">Rekomenduojamos prekės</h3>
+  <div class="row">
+    {% for product in products %}
+      <div class="col-md-3 mb-4">
+        <div class="card h-100">
+          <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}">
+          <div class="card-body">
+            <h5 class="card-title">{{ product.name }}</h5>
+            <p class="card-text">€{{ product.price }}</p>
+            <a href="{% url 'product_detail' slug=product.slug %}" class="btn btn-outline-primary btn-sm">Žiūrėti</a>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+</div>
+
 {% endblock %}

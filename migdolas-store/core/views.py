@@ -6,7 +6,8 @@ from .forms import CheckoutForm
 from django.contrib import messages
 
 def home(request):
-    return render(request, 'home.html')
+    products = Product.objects.all()[:4]
+    return render(request, 'home.html', {'products': products})
 
 def product_list(request):
     products = Product.objects.all()
@@ -49,14 +50,30 @@ def checkout(request):
     if len(cart) == 0:
         messages.warning(request, "Jūsų krepšelis tuščias.")
         return redirect('product_list')
-
+    
     if request.method == 'POST':
         form = CheckoutForm(request.POST)
-        if form.is_valid():
-            # Optionally save the order here
-            cart.clear()
-            messages.success(request, "Užsakymas pateiktas sėkmingai!")
-            return redirect('home')
+        
+    if form.is_valid():
+        order = Order.objects.create(
+            name=form.cleaned_data['name'],
+            email=form.cleaned_data['email'],
+            address=form.cleaned_data['address'],
+            phone=form.cleaned_data['phone']
+        )
+
+        for item in cart:
+            OrderItem.objects.create(
+                order=order,
+                product=item['product_obj'],  # add this to cart class if needed
+                price=item['price'],
+                quantity=item['quantity']
+            )
+
+        cart.clear()
+        messages.success(request, "Užsakymas pateiktas sėkmingai!")
+        return redirect('home')
+
     else:
         form = CheckoutForm()
 
