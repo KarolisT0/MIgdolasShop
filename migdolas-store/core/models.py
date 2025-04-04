@@ -4,13 +4,14 @@ import time
 from django.db import models, IntegrityError
 from django.utils import timezone
 from django.utils.crypto import get_random_string
-from ckeditor.fields import RichTextField
+from tinymce.models import HTMLField
+
 
 
 class Product(models.Model):
     name = models.CharField(max_length=255)
     slug = models.SlugField(unique=True)
-    description = RichTextField()
+    description = HTMLField()
     price = models.DecimalField(max_digits=10, decimal_places=2)
     image = models.ImageField(upload_to='products/')
     created_at = models.DateTimeField(auto_now_add=True)

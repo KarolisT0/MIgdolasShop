@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'core', 
     'widget_tweaks',
-    'ckeditor',
+    'tinymce',
 ]
 
 MIDDLEWARE = [
