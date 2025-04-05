@@ -19,30 +19,33 @@
     <div class="mb-4">
       {{ product.description|safe }}
     </div>
-
-    {% if product.variants.all %}
+  
+    <!-- ✅ Always show form -->
     <form method="post" action="{% url 'add_to_cart' product.id %}">
       {% csrf_token %}
-      <div class="mb-3">
-        <label for="variant" class="form-label">Pasirinkite variantą:</label>
-        <select name="variant_id" id="variant" class="form-select" required>
-          {% for variant in product.variants.all %}
-            <option value="{{ variant.id }}">
-              {{ variant.name }} - {{ variant.size }} - €{{ variant.price }}
-            </option>
-          {% endfor %}
-        </select>
+  
+      {% if product.variants.exists %}
+        <div class="mb-3">
+          <label for="variant" class="form-label">Pasirinkite variantą:</label>
+          <select name="variant_id" id="variant" class="form-select rounded-pill px-3 py-2 shadow-sm" required>
+            <option value="" disabled selected>Pasirinkite variantą</option>
+            {% for variant in product.variants.all %}
+              <option value="{{ variant.id }}">
+                {{ variant.name }} - {{ variant.size }} - €{{ variant.price }}
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+      {% endif %}
+  
+      <div class="d-flex gap-2">
+        <a href="/contact/" class="btn btn-success rounded-pill px-4 d-flex align-items-center gap-2">
+          <i class="bi bi-envelope"></i> Susisiekti
+        </a>
+        <button type="submit" class="btn btn-success rounded-pill px-4 d-flex align-items-center gap-2">
+          <i class="bi bi-cart"></i> Užsakyti
+        </button>
       </div>
-      <button type="submit" class="btn btn-primary">Užsakyti</button>
-    </form>
-    {% endif %}
-
-    <div class="mt-4 d-flex gap-2">
-      <a href="/contact/" class="btn btn-outline-secondary">Susisiekti</a>
-      <a href="/checkout/" class="btn btn-success">Užsisakyti</a>
-    </div>
-  </div>
-</div>
 
 <!-- Modal -->
 <div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
@@ -90,24 +93,24 @@
   </div>
 </div>
 {% endif %}
-{% endblock %}
 
 <!-- SIMILAR PRODUCTS -->
-{% if similar_products %}
-<hr class="my-5">
-<h3 class="mb-4">Panašūs produktai</h3>
+<hr>
+<h3>Panašūs produktai</h3>
 <div class="row">
-  {% for item in similar_products %}
-  <div class="col-md-3 mb-4">
-    <div class="card h-100 shadow-sm">
-      <img src="{{ item.image.url }}" class="card-img-top" alt="{{ item.name }}">
-      <div class="card-body">
-        <h5 class="card-title">{{ item.name }}</h5>
-        <p class="card-text">{{ item.description|truncatewords:15|safe }}</p>
-        <a href="{% url 'product_detail' slug=item.slug %}" class="btn btn-sm btn-outline-primary">Peržiūrėti</a>
+  {% for product in similar_products %}
+    <div class="col-md-3">
+      <div class="card mb-4">
+        <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}">
+        <div class="card-body">
+          <h5 class="card-title">{{ product.name }}</h5>
+          <p class="card-text">€{{ product.price }}</p>
+          <a href="{% url 'product_detail' slug=product.slug %}" class="btn btn-primary">Peržiūrėti</a>
+        </div>
       </div>
     </div>
-  </div>
+  {% empty %}
+    <p>Nėra panašių produktų.</p>
   {% endfor %}
 </div>
-{% endif %}
+{% endblock %}
