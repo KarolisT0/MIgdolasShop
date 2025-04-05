@@ -20,6 +20,11 @@ class Product(models.Model):
     def __str__(self):
         return self.name
 
+    def get_price_range(self):
+        prices = self.variants.values_list('price', flat=True)
+        if prices:
+            return min(prices), max(prices)
+        return None, None
 
 # -------------------
 # Product Images

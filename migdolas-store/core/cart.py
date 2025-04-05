@@ -8,19 +8,19 @@ class Cart:
             cart = self.session['cart'] = {}
         self.cart = cart
 
-    def add(self, product, quantity=1):
+    def add(self, product, quantity=1, name=None, price=None):
         product_id = str(product.id)
         if product_id in self.cart:
             self.cart[product_id]['quantity'] += quantity
         else:
             self.cart[product_id] = {
                 'id': product.id,
-                'name': product.name,
-                'price': str(product.price),
+                'name': name or product.name,
+                'price': str(price or product.price),
                 'quantity': quantity,
                 'image': product.image.url,
                 'slug': product.slug,
-            }
+        }
         self.save()
 
     def remove(self, product):

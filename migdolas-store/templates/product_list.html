@@ -18,9 +18,19 @@
                         </a>
                     </h5>
                     <p class="card-text">
-                        {{ product.description|truncatewords:20 }}
+                        {{ product.description|truncatechars_html:150|safe }}
                     </p>
-                    <p class="fw-bold">€{{ product.price }}</p>
+                    {% with min_price=product.get_price_range.0 max_price=product.get_price_range.1 %}
+                    {% if min_price and max_price %}
+                      {% if min_price == max_price %}
+                        <p class="fw-bold">€{{ min_price }}</p>
+                      {% else %}
+                        <p class="fw-bold">€{{ min_price }} – €{{ max_price }}</p>
+                      {% endif %}
+                    {% else %}
+                      <p class="fw-bold">€{{ product.price }}</p> {# fallback if no variants #}
+                    {% endif %}
+                  {% endwith %}
                     <a href="{% url 'product_detail' slug=product.slug %}" class="btn btn-outline-primary w-100">
                         Peržiūrėti
                     </a>
@@ -33,4 +43,4 @@
         </div>
     {% endfor %}
 </div>
-{% endblock %}
+{% endblock %}D
