@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container my-5">
+  <h2 class="mb-4 text-center">Jūsų užsakymai</h2>
+
+  {% if orders %}
+    <div class="table-responsive">
+      <table class="table table-bordered table-hover text-center align-middle">
+        <thead class="table-light">
+          <tr>
+            <th>Užsakymo numeris</th>
+            <th>Data</th>
+            <th>Suma</th>
+            <th>Veiksmas</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for order in orders %}
+          <tr>
+            <td>#{{ order.order_number }}</td>
+            <td>{{ order.created_at|date:"Y-m-d H:i" }}</td>
+            <td>€{{ order.total_price|default:"0.00"|floatformat:2 }}</td>
+            <td>
+                <a href="{% url 'order_detail' order.order_number %}" class="btn btn-outline-primary btn-sm w-100">
+                  Peržiūrėti
+                </a>
+              </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <p class="text-center">Neturite jokių užsakymų.</p>
+  {% endif %}
+</div>
+{% endblock %}

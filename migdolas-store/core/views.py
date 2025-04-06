@@ -1,16 +1,16 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views.decorators.http import require_POST
 from django.conf import settings
-from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth import login
+from django.contrib.auth import login, logout
 from django.contrib import messages
 from django.core.mail import send_mail
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LogoutView
+from django.views import View
 
 from .models import Product, Order, OrderItem
 from .cart import Cart
-from .forms import CheckoutForm
+from .forms import CheckoutForm, CustomUserCreationForm
 
 
 # ----------------------
@@ -39,7 +39,6 @@ def product_detail(request, slug):
 # ----------------------
 # 🛒 Cart Views
 # ----------------------
-@login_required
 def cart_detail(request):
     cart = Cart(request)
     return render(request, 'cart.html', {'cart': cart})
@@ -85,7 +84,6 @@ def update_cart(request, product_id):
 # ----------------------
 # 💳 Checkout
 # ----------------------
-@login_required
 def checkout(request):
     cart = Cart(request)
 
@@ -93,18 +91,19 @@ def checkout(request):
         form = CheckoutForm(request.POST)
         if form.is_valid():
             order = Order.objects.create(
+                user=request.user if request.user.is_authenticated else None,
                 name=form.cleaned_data['name'],
                 email=form.cleaned_data['email'],
                 address=form.cleaned_data['address'],
                 phone=form.cleaned_data['phone'],
             )
 
-            for item in cart:
+            for item in cart_items:
                 OrderItem.objects.create(
                     order=order,
-                    product=item['product_obj'],
-                    price=item['price'],
-                    quantity=item['quantity']
+                    product=item['product'],
+                    quantity=item['quantity'],
+                    price=item['price']
                 )
 
             send_mail(
@@ -139,6 +138,18 @@ def order_success(request, order_number):
         'total': total,
     })
 
+# ----------------------
+# 📝 Order views
+
+@login_required
+def order_detail(request, order_number):
+    order = get_object_or_404(Order, order_number=order_number, user=request.user)
+    return render(request, 'order_detail.html', {'order': order})
+
+@login_required
+def order_history(request):
+    orders = Order.objects.filter(user=request.user).order_by('-created_at')
+    return render(request, 'order_history.html', {'orders': orders})
 
 # ----------------------
 # 🔒 Authentication Views
@@ -146,9 +157,9 @@ def order_success(request, order_number):
 def register(request):
     if request.user.is_authenticated:
         return redirect('product_list')  # or another home page
-    form = UserCreationForm()
+    form = CustomUserCreationForm()
     if request.method == 'POST':
-        form = UserCreationForm(request.POST)
+        form = CustomUserCreationForm(request.POST)
         if form.is_valid():
             user = form.save()
             login(request, user)
@@ -156,6 +167,9 @@ def register(request):
             return redirect('product_list')
     return render(request, 'registration/register.html', {'form': form})
 
-class CustomLogoutView(LogoutView):
-    def get(self, request, *args, **kwargs):
-        return self.post(request, *args, **kwargs)
+class CustomLogoutView(View):
+    def get(self, request):
+        logout(request)
+        messages.success(request, "Atsijungėte sėkmingai.")
+        return redirect('login')  # or 'product_list' if preferred
+    

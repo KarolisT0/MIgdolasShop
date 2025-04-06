@@ -1,6 +1,6 @@
 from django.urls import path, include
 from django.contrib.auth import views as auth_views
-from django.contrib.auth.views import LogoutView
+from .views import CustomLogoutView
 from . import views
 
 urlpatterns = [
@@ -26,7 +26,16 @@ urlpatterns = [
     path('register/', views.register, name='register'),
     path('accounts/', include('django.contrib.auth.urls')),
     path('login/', auth_views.LoginView.as_view(template_name='registration/login.html'), name='login'),
-    path('logout/', LogoutView.as_view(next_page='product_list'), name='logout'),
+    path('logout/', CustomLogoutView.as_view(), name='logout'),
+    path('password-reset/', auth_views.PasswordResetView.as_view(), name='password_reset'),
+    path('password-reset/done/', auth_views.PasswordResetDoneView.as_view(), name='password_reset_done'),
+    path('reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
+    path('reset/done/', auth_views.PasswordResetCompleteView.as_view(), name='password_reset_complete'),
+
+    # orders
+    path('mano-uzsakymai/', views.order_history, name='order_history'),
+    path('mano-uzsakymai/<str:order_number>/', views.order_detail, name='order_detail'),
+
 
     path('<slug:slug>/', views.product_detail, name='product_detail'),
 ]
