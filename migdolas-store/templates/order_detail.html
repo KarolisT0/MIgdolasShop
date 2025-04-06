@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-5">
+  <h2>Užsakymo informacija</h2>
+  <p><strong>Numeris:</strong> {{ order.order_number }}</p>
+  <p><strong>Data:</strong> {{ order.created_at|date:"Y-m-d H:i" }}</p>
+  <p><strong>Būsena:</strong> {{ order.get_status_display }}</p>
+
+  <h4 class="mt-4">Prekės:</h4>
+  <table class="table table-bordered">
+    <thead class="table-light">
+      <tr>
+        <th>Produktas</th>
+        <th>Kiekis</th>
+        <th>Kaina (€)</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in order.items.all %}
+      <tr>
+        <td>{{ item.product.name }}</td>
+        <td>{{ item.quantity }}</td>
+        <td>{{ item.price }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <p class="fw-bold">Bendra suma: €{{ order.total_price }}</p>
+
+  <a href="{% url 'order_history' %}" class="btn btn-outline-primary mt-3">← Grįžti į užsakymų sąrašą</a>
+</div>
+{% endblock %}

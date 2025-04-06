@@ -1,13 +1,16 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views.decorators.http import require_POST
-from django.contrib import messages
-from django.urls import reverse
 from django.conf import settings
-
-from .models import Product, Order, OrderItem
-from .cart import Cart
-from .forms import CheckoutForm
+from django.contrib.auth import login, logout
+from django.contrib import messages
 from django.core.mail import send_mail
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.views import LogoutView
+from django.views import View
+
+from .models import Product, Order, OrderItem, Category
+from .cart import Cart
+from .forms import CheckoutForm, CustomUserCreationForm
 
 
 # ----------------------
@@ -16,11 +19,6 @@ from django.core.mail import send_mail
 def home(request):
     products = Product.objects.all()[:4]
     return render(request, 'home.html', {'products': products})
-
-
-def product_list(request):
-    products = Product.objects.all()
-    return render(request, 'product_list.html', {'products': products})
 
 
 def product_detail(request, slug):
@@ -32,7 +30,20 @@ def product_detail(request, slug):
         'similar_products': similar_products,
     })
 
+def product_list(request, category_slug=None):
+    category = None
+    categories = Category.objects.all()
+    products = Product.objects.all()
 
+    if category_slug:
+        category = Category.objects.get(slug=category_slug)
+        products = products.filter(category=category)
+
+    return render(request, 'product_list.html', {
+        'category': category,
+        'categories': categories,
+        'products': products,
+    })
 # ----------------------
 # 🛒 Cart Views
 # ----------------------
@@ -88,6 +99,7 @@ def checkout(request):
         form = CheckoutForm(request.POST)
         if form.is_valid():
             order = Order.objects.create(
+                user=request.user if request.user.is_authenticated else None,
                 name=form.cleaned_data['name'],
                 email=form.cleaned_data['email'],
                 address=form.cleaned_data['address'],
@@ -95,11 +107,12 @@ def checkout(request):
             )
 
             for item in cart:
+                product = Product.objects.get(slug=item['slug'])
                 OrderItem.objects.create(
                     order=order,
-                    product=item['product_obj'],
-                    price=item['price'],
-                    quantity=item['quantity']
+                    product=product,
+                    quantity=item['quantity'],
+                    price=item['price']
                 )
 
             send_mail(
@@ -133,3 +146,39 @@ def order_success(request, order_number):
         'order': order,
         'total': total,
     })
+
+# ----------------------
+# 📝 Order views
+
+@login_required
+def order_detail(request, order_number):
+    order = get_object_or_404(Order, order_number=order_number, user=request.user)
+    return render(request, 'order_detail.html', {'order': order})
+
+@login_required
+def order_history(request):
+    orders = Order.objects.filter(user=request.user).order_by('-created_at')
+    return render(request, 'order_history.html', {'orders': orders})
+
+# ----------------------
+# 🔒 Authentication Views
+
+def register(request):
+    if request.user.is_authenticated:
+        return redirect('product_list')  # or another home page
+    form = CustomUserCreationForm()
+    if request.method == 'POST':
+        form = CustomUserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            messages.success(request, "Registracija sėkminga!")
+            return redirect('product_list')
+    return render(request, 'registration/register.html', {'form': form})
+
+class CustomLogoutView(View):
+    def get(self, request):
+        logout(request)
+        messages.success(request, "Atsijungėte sėkmingai.")
+        return redirect('login')  # or 'product_list' if preferred
+    
