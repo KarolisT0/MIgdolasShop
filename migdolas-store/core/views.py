@@ -2,10 +2,12 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.views.decorators.http import require_POST
 from django.contrib import messages
 from django.urls import reverse
+from django.conf import settings
 
 from .models import Product, Order, OrderItem
 from .cart import Cart
 from .forms import CheckoutForm
+from django.core.mail import send_mail
 
 
 # ----------------------
@@ -100,13 +102,34 @@ def checkout(request):
                     quantity=item['quantity']
                 )
 
+            send_mail(
+                subject=f"Užsakymas patvirtintas – {order.order_number}",
+                message=(
+                    f"Ačiū, {order.name}!\n\n"
+                    f"Jūsų užsakymas #{order.order_number} buvo gautas.\n"
+                    f"Prekių kiekis: {order.items.count()}\n"
+                    f"Mes susisieksime su Jumis greitai.\n\n"
+                    f"Migdolas"
+                ),
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                recipient_list=[order.email, settings.ADMIN_EMAIL],
+                fail_silently=False
+            )
+
+
             cart.clear()
-            messages.success(request, "Užsakymas pateiktas sėkmingai!")
-            return redirect('home')
+            return redirect('order_success', order_number=order.order_number)
     else:
         form = CheckoutForm()
 
-    return render(request, 'checkout.html', {
-        'form': form,
-        'cart': cart
+    return render(request, 'checkout.html', {'form': form, 'cart': cart})
+
+def order_success(request, order_number):
+    order = get_object_or_404(Order, order_number=order_number)
+
+    total = sum(item.price * item.quantity for item in order.items.all())
+
+    return render(request, 'order_success.html', {
+        'order': order,
+        'total': total,
     })

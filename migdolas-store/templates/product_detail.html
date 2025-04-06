@@ -2,115 +2,124 @@
 {% load static %}
 
 {% block content %}
-<div class="row">
-  <!-- LEFT: IMAGE + THUMBNAILS -->
-  <div class="col-md-6 mb-4">
-    <img id="mainImage" src="{{ product.image.url }}" class="img-fluid rounded shadow mb-3" alt="{{ product.name }}" data-bs-toggle="modal" data-bs-target="#imageModal">
-    <div class="d-flex flex-wrap gap-2">
-      {% for img in product.images.all %}
-        <img src="{{ img.image.url }}" class="img-thumbnail" style="width: 80px; height: 80px; object-fit: cover; cursor: pointer;" onclick="document.getElementById('mainImage').src=this.src">
-      {% endfor %}
-    </div>
-  </div>
-
-  <!-- RIGHT: PRODUCT INFO + VARIANT -->
-  <div class="col-md-6 position-sticky" style="top: 100px;">
-    <h2 class="fw-bold mb-3">{{ product.name }}</h2>
-    <div class="mb-4">
-      {{ product.description|safe }}
-    </div>
-  
-    <!-- ✅ Always show form -->
-    <form method="post" action="{% url 'add_to_cart' product.id %}">
-      {% csrf_token %}
-  
-      {% if product.variants.exists %}
-        <div class="mb-3">
-          <label for="variant" class="form-label">Pasirinkite variantą:</label>
-          <select name="variant_id" id="variant" class="form-select rounded-pill px-3 py-2 shadow-sm" required>
-            <option value="" disabled selected>Pasirinkite variantą</option>
-            {% for variant in product.variants.all %}
-              <option value="{{ variant.id }}">
-                {{ variant.name }} - {{ variant.size }} - €{{ variant.price }}
-              </option>
-            {% endfor %}
-          </select>
-        </div>
-      {% endif %}
-  
-      <div class="d-flex gap-2">
-        <a href="/contact/" class="btn btn-success rounded-pill px-4 d-flex align-items-center gap-2">
-          <i class="bi bi-envelope"></i> Susisiekti
-        </a>
-        <button type="submit" class="btn btn-success rounded-pill px-4 d-flex align-items-center gap-2">
-          <i class="bi bi-cart"></i> Užsakyti
-        </button>
-      </div>
-
-<!-- Modal -->
-<div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered modal-lg">
-    <div class="modal-content bg-transparent border-0">
-      <div class="modal-body text-center">
-        <img id="modalImage" src="{{ product.image.url }}" class="img-fluid rounded">
-      </div>
-    </div>
-  </div>
-</div>
-
-<script>
-  const mainImg = document.getElementById('mainImage');
-  const modalImg = document.getElementById('modalImage');
-
-  mainImg.addEventListener('click', () => {
-    modalImg.src = mainImg.src;
-  });
-</script>
-
-<!-- VARIANTS TABLE -->
-{% if product.variants.all %}
-<div class="mt-5">
-  <h4 class="mb-3">Galimi variantai</h4>
-  <div class="table-responsive">
-    <table class="table table-striped table-bordered">
-      <thead class="table-light">
-        <tr>
-          <th>Variant</th>
-          <th>Išmatavimai</th>
-          <th>Kaina (€)</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for v in product.variants.all %}
-        <tr>
-          <td>{{ v.name }}</td>
-          <td>{{ v.size }}</td>
-          <td>€{{ v.price }}</td>
-        </tr>
+<div class="container my-5">
+  <div class="row">
+    <!-- LEFT: IMAGE + THUMBNAILS -->
+    <div class="col-md-6 mb-4">
+      <img id="mainImage" src="{{ product.image.url }}" class="img-fluid rounded shadow mb-3" alt="{{ product.name }}" data-bs-toggle="modal" data-bs-target="#imageModal">
+      <div class="d-flex flex-wrap gap-2">
+        {% for img in product.images.all %}
+          <img src="{{ img.image.url }}" class="img-thumbnail" style="width: 80px; height: 80px; object-fit: cover; cursor: pointer;" onclick="document.getElementById('mainImage').src=this.src">
         {% endfor %}
-      </tbody>
-    </table>
-  </div>
-</div>
-{% endif %}
+      </div>
+    </div>
 
-<!-- SIMILAR PRODUCTS -->
-<hr>
-<h3>Panašūs produktai</h3>
-<div class="row">
-  {% for product in similar_products %}
-    <div class="col-md-3">
-      <div class="card mb-4">
-        <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}">
-        <div class="card-body">
-          <h5 class="card-title">{{ product.name }}</h5>
-          <p class="card-text">€{{ product.price }}</p>
-          <a href="{% url 'product_detail' slug=product.slug %}" class="btn btn-primary">Peržiūrėti</a>
+    <!-- RIGHT: PRODUCT INFO + VARIANT -->
+    <div class="col-md-6 mb-4">
+      <h2 class="fw-bold mb-3">{{ product.name }}</h2>
+      <div class="mb-4">
+        {{ product.description|safe }}
+      </div>
+
+      <form method="post" action="{% url 'add_to_cart' product.id %}">
+        {% csrf_token %}
+
+        {% if product.variants.exists %}
+          <div class="mb-3">
+            <label for="variant" class="form-label">Pasirinkite variantą:</label>
+            <select name="variant_id" id="variant" class="form-select rounded-pill" required>
+              <option value="" disabled selected>Pasirinkite variantą</option>
+              {% for variant in product.variants.all %}
+                <option value="{{ variant.id }}">
+                  {{ variant.name }} - {{ variant.size }} - €{{ variant.price }}
+                </option>
+              {% endfor %}
+            </select>
+          </div>
+        {% endif %}
+
+        <div class="d-flex gap-2">
+          <a href="/contact/" class="btn btn-success rounded-pill px-4 d-flex align-items-center gap-2">
+            <i class="bi bi-envelope"></i> Susisiekti
+          </a>
+          <button type="submit" class="btn btn-success rounded-pill px-4 d-flex align-items-center gap-2">
+            <i class="bi bi-cart"></i> Užsakyti
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal -->
+  <div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content bg-transparent border-0">
+        <div class="modal-body text-center">
+          <img id="modalImage" src="{{ product.image.url }}" class="img-fluid rounded">
         </div>
       </div>
     </div>
-  {% empty %}
-    <p>Nėra panašių produktų.</p>
-  {% endfor %}
+  </div>
+
+  <script>
+    const mainImg = document.getElementById('mainImage');
+    const modalImg = document.getElementById('modalImage');
+    mainImg.addEventListener('click', () => {
+      modalImg.src = mainImg.src;
+    });
+  </script>
+
+  <!-- VARIANTS TABLE -->
+  {% if product.variants.all %}
+  <div class="row justify-content-center mt-5">
+    <div class="col-lg-10">
+      <h4 class="text-center mb-3">Galimi variantai</h4>
+      <div class="table-responsive">
+        <table class="table table-striped table-bordered text-center w-100">
+          <thead class="table-light">
+            <tr>
+              <th>Variant</th>
+              <th>Išmatavimai</th>
+              <th>Kaina (€)</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for v in product.variants.all %}
+            <tr>
+              <td>{{ v.name }}</td>
+              <td>{{ v.size }}</td>
+              <td>€{{ v.price }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- SIMILAR PRODUCTS -->
+  {% if similar_products %}
+  <div class="row justify-content-center mt-5">
+    <div class="col-lg-10">
+      <h4 class="text-center mb-4">Panašūs produktai</h4>
+      <div class="row justify-content-center">
+        {% for product in similar_products %}
+        <div class="col-md-4 mb-4">
+          <a href="{% url 'product_detail' slug=product.slug %}" class="text-decoration-none text-dark">
+            <div class="card h-100 shadow-sm">
+              <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}">
+              <div class="card-body text-center">
+                <h5 class="card-title">{{ product.name }}</h5>
+                <p class="card-text">€{{ product.price }}</p>
+              </div>
+            </div>
+          </a>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+  {% endif %}
 </div>
 {% endblock %}

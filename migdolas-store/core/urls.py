@@ -18,6 +18,7 @@ urlpatterns = [
 
     # 📝 TinyMCE
     path('tinymce/', include('tinymce.urls')),
+    path('order-success/<str:order_number>/', views.order_success, name='order_success'),
 
     path('<slug:slug>/', views.product_detail, name='product_detail'),
 ]
