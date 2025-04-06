@@ -33,7 +33,6 @@ def product_detail(request, slug):
     })
 
 def product_list(request, category_slug=None):
-    query = request.GET.get('q')
     category = None
     categories = Category.objects.all()
     products = Product.objects.all()
@@ -42,18 +41,39 @@ def product_list(request, category_slug=None):
         category = Category.objects.get(slug=category_slug)
         products = products.filter(category=category)
 
-    if query:
-        products = products.filter(
-            Q(name__icontains=query) |
-            Q(description__icontains=query)
-        )
+    # Price filtering with variant range logic
+    min_price = request.GET.get('min_price')
+    max_price = request.GET.get('max_price')
 
-    return render(request, 'product_list.html', {
+    if min_price and max_price:
+        try:
+            min_price = float(min_price)
+            max_price = float(max_price)
+
+            filtered_products = []
+            for product in products:
+                price_min, price_max = get_price_range(product)
+                if price_max >= min_price and price_min <= max_price:
+                    filtered_products.append(product)
+
+            products = filtered_products
+        except ValueError:
+            pass  # Ignore invalid filter input
+
+    context = {
         'category': category,
         'categories': categories,
         'products': products,
-        'query': query,
-    })
+        'min_price': min_price or '',
+        'max_price': max_price or '',
+    }
+    return render(request, 'product_list.html', context)
+
+def get_price_range(self):
+    prices = list(self.variants.values_list('price', flat=True))
+    if prices:
+        return min(prices), max(prices)
+    return self.price, self.price
 # ----------------------
 # 🛒 Cart Views
 # ----------------------
