@@ -54,6 +54,21 @@ class ProductVariant(models.Model):
 # Order
 # -------------------
 class Order(models.Model):
+    STATUS_CHOICES = [
+        ('pending', 'Laukiama'),
+        ('processing', 'Vykdoma'),
+        ('shipped', 'Išsiųsta'),
+        ('completed', 'Įvykdyta'),
+        ('cancelled', 'Atšaukta'),
+    ]
+
+    status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default='pending',
+    )
+
+    created_at = models.DateTimeField(auto_now_add=True)
     order_number = models.CharField(max_length=30, unique=True, blank=True)
     name = models.CharField(max_length=100)
     email = models.EmailField()

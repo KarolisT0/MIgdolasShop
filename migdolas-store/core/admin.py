@@ -1,5 +1,8 @@
 from django.contrib import admin
 from .models import Product, ProductImage, ProductVariant, Order, OrderItem
+from django.core.mail import send_mail
+from django.conf import settings
+from django.utils.html import format_html
 
 
 # -------- ORDER ADMIN --------
@@ -12,11 +15,39 @@ class OrderItemInline(admin.TabularInline):
 
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', 'email', 'created_at', 'total_price')
+    list_display = ('id', 'name', 'email', 'created_at', 'total_price', 'status', 'colored_status')
     search_fields = ('id', 'name', 'email', 'phone')
-    list_filter = ('created_at',)
+    list_filter = ('created_at', 'status')
+    list_editable = ('status',)
     list_display_links = ('id', 'name')
     inlines = [OrderItemInline]
+
+    def save_model(self, request, obj, form, change):
+        if change:
+            original = Order.objects.get(pk=obj.pk)
+            if original.status != obj.status:
+                # 🔔 Status has changed — send email
+                send_mail(
+                    subject=f"Užsakymo būsena atnaujinta: {obj.order_number}",
+                    message=f"Jūsų užsakymo būsena pakeista į: {obj.get_status_display()}",
+                    from_email=settings.DEFAULT_FROM_EMAIL,
+                    recipient_list=[obj.email, settings.ADMIN_EMAIL],
+                )
+        super().save_model(request, obj, form, change)
+
+    def colored_status(self, obj):
+        color_map = {
+            'pending': 'orange',
+            'processing': 'blue',
+            'shipped': 'teal',
+            'completed': 'green',
+            'cancelled': 'red',
+        }
+        color = color_map.get(obj.status, 'black')
+        return format_html('<strong style="color: {}">{}</strong>', color, obj.get_status_display())
+
+    colored_status.short_description = 'Statusas'
+
 
     def total_price(self, obj):
         return sum(item.price * item.quantity for item in obj.items.all())
