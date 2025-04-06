@@ -1,0 +1,35 @@
+{% for product in products %}
+  <div class="col-md-6 col-lg-4 mb-4">
+    <div class="card h-100 shadow-sm">
+      <a href="{% url 'product_detail' slug=product.slug %}">
+        <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}">
+      </a>
+      <div class="card-body">
+        <h5 class="card-title">
+          <a href="{% url 'product_detail' slug=product.slug %}" class="text-decoration-none text-dark">
+            {{ product.name }}
+          </a>
+        </h5>
+        <p class="card-text">{{ product.description|truncatechars_html:150|safe }}</p>
+
+        {% with min_price=product.get_price_range.0 max_price=product.get_price_range.1 %}
+          {% if min_price and max_price %}
+            {% if min_price == max_price %}
+              <p class="fw-bold">€{{ min_price }}</p>
+            {% else %}
+              <p class="fw-bold">€{{ min_price }} – €{{ max_price }}</p>
+            {% endif %}
+          {% else %}
+            <p class="fw-bold">€{{ product.price }}</p>
+          {% endif %}
+        {% endwith %}
+
+        <a href="{% url 'product_detail' slug=product.slug %}" class="btn btn-outline-primary w-100">Peržiūrėti</a>
+      </div>
+    </div>
+  </div>
+{% empty %}
+  <div class="col-12">
+    <p>Nėra prekių šioje kategorijoje.</p>
+  </div>
+{% endfor %}

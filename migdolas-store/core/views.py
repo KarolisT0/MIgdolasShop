@@ -5,8 +5,10 @@ from django.contrib.auth import login, logout
 from django.contrib import messages
 from django.core.mail import send_mail
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.views import LogoutView
 from django.views import View
+from django.db.models import Q
+from django.http import JsonResponse
+from django.template.loader import render_to_string
 
 from .models import Product, Order, OrderItem, Category
 from .cart import Cart
@@ -31,6 +33,7 @@ def product_detail(request, slug):
     })
 
 def product_list(request, category_slug=None):
+    query = request.GET.get('q')
     category = None
     categories = Category.objects.all()
     products = Product.objects.all()
@@ -39,10 +42,17 @@ def product_list(request, category_slug=None):
         category = Category.objects.get(slug=category_slug)
         products = products.filter(category=category)
 
+    if query:
+        products = products.filter(
+            Q(name__icontains=query) |
+            Q(description__icontains=query)
+        )
+
     return render(request, 'product_list.html', {
         'category': category,
         'categories': categories,
         'products': products,
+        'query': query,
     })
 # ----------------------
 # 🛒 Cart Views
@@ -182,3 +192,23 @@ class CustomLogoutView(View):
         messages.success(request, "Atsijungėte sėkmingai.")
         return redirect('login')  # or 'product_list' if preferred
     
+# ----------------------
+# Search functionality
+# ----------------------
+
+
+def ajax_product_search(request):
+    query = request.GET.get('q')
+    products = Product.objects.all()
+
+    if query:
+        products = products.filter(
+            Q(name__icontains=query) |
+            Q(description__icontains=query)
+        )
+
+    html = render_to_string('partials/_product_cards.html', {
+        'products': products
+    })
+
+    return JsonResponse({'html': html})
