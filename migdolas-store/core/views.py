@@ -1,13 +1,16 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views.decorators.http import require_POST
-from django.contrib import messages
-from django.urls import reverse
 from django.conf import settings
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth import login
+from django.contrib import messages
+from django.core.mail import send_mail
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.views import LogoutView
 
 from .models import Product, Order, OrderItem
 from .cart import Cart
 from .forms import CheckoutForm
-from django.core.mail import send_mail
 
 
 # ----------------------
@@ -36,6 +39,7 @@ def product_detail(request, slug):
 # ----------------------
 # 🛒 Cart Views
 # ----------------------
+@login_required
 def cart_detail(request):
     cart = Cart(request)
     return render(request, 'cart.html', {'cart': cart})
@@ -81,6 +85,7 @@ def update_cart(request, product_id):
 # ----------------------
 # 💳 Checkout
 # ----------------------
+@login_required
 def checkout(request):
     cart = Cart(request)
 
@@ -133,3 +138,24 @@ def order_success(request, order_number):
         'order': order,
         'total': total,
     })
+
+
+# ----------------------
+# 🔒 Authentication Views
+
+def register(request):
+    if request.user.is_authenticated:
+        return redirect('product_list')  # or another home page
+    form = UserCreationForm()
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            messages.success(request, "Registracija sėkminga!")
+            return redirect('product_list')
+    return render(request, 'registration/register.html', {'form': form})
+
+class CustomLogoutView(LogoutView):
+    def get(self, request, *args, **kwargs):
+        return self.post(request, *args, **kwargs)

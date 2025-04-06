@@ -143,3 +143,8 @@ EMAIL_HOST_USER = 'karolistomkus13@gmail.com'  # Replace with your Gmail
 EMAIL_HOST_PASSWORD = 'qvfn bzff cqcj yyhl'  # Replace with app password (no spaces)
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 ADMIN_EMAIL = 'karolistomkus13@gmail.com'
+
+# login settings
+LOGIN_URL = 'login'
+LOGOUT_REDIRECT_URL = 'product_list'
+LOGOUT_REDIRECT_URL = 'login'
