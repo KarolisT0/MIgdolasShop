@@ -3,81 +3,79 @@
 
 {% block content %}
 <div class="container my-5">
+  <h2 class="mb-4">Mūsų Baldai</h2>
   <div class="row">
-    <!-- Sidebar: Categories + Price Filter -->
+    
+    <!-- Sidebar: Categories + Filters -->
     <div class="col-md-3 mb-4">
       <h5>Kategorijos</h5>
       <ul class="list-group mb-4">
-        <li class="list-group-item {% if not category %}active{% endif %}">
-          <a href="{% url 'product_list' %}" class="text-decoration-none">Visos</a>
+        <li class="list-group-item {% if not category %}active{% endif %}" data-category="">
+          <a href="#" class="text-decoration-none category-link">Visos</a>
         </li>
         {% for cat in categories %}
-        <li class="list-group-item {% if cat == category %}active{% endif %}">
-          <a href="{% url 'product_list_by_category' cat.slug %}" class="text-decoration-none">
-            {{ cat.name }}
-          </a>
+        <li class="list-group-item {% if cat == category %}active{% endif %}" data-category="{{ cat.slug }}">
+          <a href="#" class="text-decoration-none category-link">{{ cat.name }}</a>
         </li>
         {% endfor %}
       </ul>
 
-      <!-- ✅ Price Filter -->
-      <form method="get" class="mb-4" id="priceFilterForm">
-        <h6>Filtruoti pagal kainą</h6>
-        <div class="input-group mb-2">
-          <span class="input-group-text">Nuo €</span>
-          <input type="number" class="form-control" name="min_price" value="{{ min_price }}">
-        </div>
-        <div class="input-group mb-2">
-          <span class="input-group-text">Iki €</span>
-          <input type="number" class="form-control" name="max_price" value="{{ max_price }}">
-        </div>
+      <h5>Kaina (€)</h5>
+      <div class="mb-3">
+        <input type="number" id="minPrice" class="form-control mb-2" placeholder="Nuo">
+        <input type="number" id="maxPrice" class="form-control" placeholder="Iki">
+      </div>
 
-        {% if category %}
-          <!-- Keep category in query -->
-          <input type="hidden" name="category" value="{{ category.slug }}">
-        {% endif %}
-
-        <button type="submit" class="btn btn-primary w-100">Filtruoti</button>
-      </form>
+      <h5>Ieškoti</h5>
+      <input type="text" id="searchInput" class="form-control mb-2" placeholder="Ieškoti baldų...">
+      
+      <button id="filterButton" class="btn btn-primary w-100">Filtruoti</button>
     </div>
 
-    <!-- Product Grid -->
+    <!-- Main Content: Products -->
     <div class="col-md-9">
-      <h3 class="mb-4">Produktai</h3>
-      <div class="row">
-        {% for product in products %}
-        <div class="col-md-6 col-lg-4 mb-4">
-          <div class="card h-100 shadow-sm">
-            <a href="{% url 'product_detail' slug=product.slug %}">
-              <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}">
-            </a>
-            <div class="card-body">
-              <h5 class="card-title">
-                <a href="{% url 'product_detail' slug=product.slug %}" class="text-decoration-none text-dark">
-                  {{ product.name }}
-                </a>
-              </h5>
-              <p class="card-text">{{ product.description|truncatechars_html:150|safe }}</p>
-
-              {% with min_price=product.get_price_range.0 max_price=product.get_price_range.1 %}
-              {% if min_price == max_price %}
-                <p class="fw-bold">€{{ min_price }}</p>
-              {% else %}
-                <p class="fw-bold">€{{ min_price }} – €{{ max_price }}</p>
-              {% endif %}
-              {% endwith %}
-
-              <a href="{% url 'product_detail' slug=product.slug %}" class="btn btn-outline-primary w-100">Peržiūrėti</a>
-            </div>
-          </div>
-        </div>
-        {% empty %}
-        <div class="col-12">
-          <p class="text-center">Nėra produktų pagal pasirinktus filtrus.</p>
-        </div>
-        {% endfor %}
+      <div class="row" id="productResults">
+        {% include 'partials/_product_cards.html' %}
       </div>
     </div>
   </div>
 </div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+  let selectedCategory = "";
+
+  function fetchFilteredProducts() {
+    const query = $('#searchInput').val();
+    const minPrice = $('#minPrice').val();
+    const maxPrice = $('#maxPrice').val();
+
+    $.ajax({
+      url: "{% url 'ajax_product_search' %}",
+      data: {
+        q: query,
+        min_price: minPrice,
+        max_price: maxPrice,
+        category: selectedCategory
+      },
+      dataType: 'json',
+      success: function (data) {
+        $('#productResults').html(data.html);
+      }
+    });
+  }
+
+  $('#searchInput').on('input', fetchFilteredProducts);
+  $('#filterButton').on('click', fetchFilteredProducts);
+
+  $('.category-link').on('click', function (e) {
+    e.preventDefault();
+    selectedCategory = $(this).closest('li').data('category');
+
+    $('.list-group-item').removeClass('active');
+    $(this).closest('li').addClass('active');
+
+    fetchFilteredProducts();
+  });
+</script>
 {% endblock %}

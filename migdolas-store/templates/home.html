@@ -1,30 +1,49 @@
 {% extends 'base.html' %}
+{% load static %}
+
 {% block content %}
+<link rel="stylesheet" href="{% static 'css/home.css' %}">
 
-<div class="container mt-5">
-  <div class="text-center">
-    <h1 class="mb-4">Sveiki atvykę į Migdolas Baldai!</h1>
-    <a href="{% url 'product_list' %}" class="btn btn-primary btn-lg">Peržiūrėti prekes</a>
+<div class="hero-section">
+  <div class="hero-overlay"></div>
+  <div class="hero-text">
+    Baldai Jūsų namams
   </div>
+</div>
 
-  {% if products %}
-  <hr class="my-5">
-  <h3 class="mb-4">Rekomenduojamos prekės</h3>
+<div class="container">
+  <h2 class="text-center mb-4">Naujausi produktai</h2>
   <div class="row">
     {% for product in products %}
-      <div class="col-md-3 mb-4">
-        <div class="card h-100">
-          <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}">
+      <div class="col-md-4 mb-4">
+        <div class="card h-100 shadow-sm">
+          <a href="{% url 'product_detail' slug=product.slug %}">
+            <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}">
+          </a>
           <div class="card-body">
-            <h5 class="card-title">{{ product.name }}</h5>
-            <p class="card-text">€{{ product.price }}</p>
-            <a href="{% url 'product_detail' slug=product.slug %}" class="btn btn-outline-primary btn-sm">Žiūrėti</a>
+            <h5 class="card-title">
+              <a href="{% url 'product_detail' slug=product.slug %}" class="text-decoration-none text-dark">
+                {{ product.name }}
+              </a>
+            </h5>
+            {% with min_price=product.get_price_range.0 max_price=product.get_price_range.1 %}
+              {% if min_price and max_price %}
+                {% if min_price == max_price %}
+                  <p class="fw-bold">€{{ min_price }}</p>
+                {% else %}
+                  <p class="fw-bold">€{{ min_price }} – €{{ max_price }}</p>
+                {% endif %}
+              {% else %}
+                <p class="fw-bold">€{{ product.price }}</p>
+              {% endif %}
+            {% endwith %}
+            <a href="{% url 'product_detail' slug=product.slug %}" class="btn btn-outline-primary w-100">Peržiūrėti</a>
           </div>
         </div>
       </div>
+    {% empty %}
+      <p class="text-center">Nėra produktų</p>
     {% endfor %}
   </div>
-  {% endif %}
 </div>
-
 {% endblock %}

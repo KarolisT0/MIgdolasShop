@@ -37,10 +37,10 @@ class Product(models.Model):
         return self.name
 
     def get_price_range(self):
-        prices = self.variants.values_list('price', flat=True)
+        prices = list(self.variants.values_list('price', flat=True))
         if prices:
             return min(prices), max(prices)
-        return None, None
+        return self.price, self.price
 
 # -------------------
 # Product Images

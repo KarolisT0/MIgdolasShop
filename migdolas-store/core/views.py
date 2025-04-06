@@ -6,9 +6,9 @@ from django.contrib import messages
 from django.core.mail import send_mail
 from django.contrib.auth.decorators import login_required
 from django.views import View
-from django.db.models import Q
 from django.http import JsonResponse
 from django.template.loader import render_to_string
+from django.core.paginator import Paginator
 
 from .models import Product, Order, OrderItem, Category
 from .cart import Cart
@@ -44,6 +44,7 @@ def product_list(request, category_slug=None):
     # Price filtering with variant range logic
     min_price = request.GET.get('min_price')
     max_price = request.GET.get('max_price')
+    q = request.GET.get('q')
 
     if min_price and max_price:
         try:
@@ -59,6 +60,12 @@ def product_list(request, category_slug=None):
             products = filtered_products
         except ValueError:
             pass  # Ignore invalid filter input
+    if q:
+        products = products.filter(name__icontains=q)
+
+    paginator = Paginator(products, 9)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
 
     context = {
         'category': category,
@@ -66,6 +73,8 @@ def product_list(request, category_slug=None):
         'products': products,
         'min_price': min_price or '',
         'max_price': max_price or '',
+        'q': q or '',
+        'page_obj': page_obj,
     }
     return render(request, 'product_list.html', context)
 
@@ -218,17 +227,35 @@ class CustomLogoutView(View):
 
 
 def ajax_product_search(request):
-    query = request.GET.get('q')
+    query = request.GET.get('q', '')
+    min_price = request.GET.get('min_price')
+    max_price = request.GET.get('max_price')
+    category_slug = request.GET.get('category')
+
     products = Product.objects.all()
 
+    if category_slug:
+        products = products.filter(category__slug=category_slug)
+
     if query:
-        products = products.filter(
-            Q(name__icontains=query) |
-            Q(description__icontains=query)
-        )
+        products = products.filter(name__icontains=query)
 
-    html = render_to_string('partials/_product_cards.html', {
-        'products': products
-    })
+    # Filter using annotated price range (from variants or base price)
+    filtered_products = []
+    for product in products:
+        min_variant_price, max_variant_price = product.get_price_range()
 
+        # Convert input prices to float safely
+        try:
+            min_price_val = float(min_price) if min_price else None
+            max_price_val = float(max_price) if max_price else None
+        except ValueError:
+            min_price_val = max_price_val = None
+
+        # Check if product fits in range
+        if (min_price_val is None or max_variant_price >= min_price_val) and \
+           (max_price_val is None or min_variant_price <= max_price_val):
+            filtered_products.append(product)
+
+    html = render_to_string('partials/_product_cards.html', {'products': filtered_products})
     return JsonResponse({'html': html})
