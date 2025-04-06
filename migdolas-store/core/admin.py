@@ -14,6 +14,7 @@ class OrderItemInline(admin.TabularInline):
 class OrderAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'email', 'created_at', 'total_price')
     search_fields = ('id', 'name', 'email', 'phone')
+    list_filter = ('created_at',)
     list_display_links = ('id', 'name')
     inlines = [OrderItemInline]
 
