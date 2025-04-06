@@ -8,7 +8,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LogoutView
 from django.views import View
 
-from .models import Product, Order, OrderItem
+from .models import Product, Order, OrderItem, Category
 from .cart import Cart
 from .forms import CheckoutForm, CustomUserCreationForm
 
@@ -21,11 +21,6 @@ def home(request):
     return render(request, 'home.html', {'products': products})
 
 
-def product_list(request):
-    products = Product.objects.all()
-    return render(request, 'product_list.html', {'products': products})
-
-
 def product_detail(request, slug):
     product = get_object_or_404(Product, slug=slug)
     similar_products = Product.objects.exclude(id=product.id)[:4]
@@ -35,7 +30,20 @@ def product_detail(request, slug):
         'similar_products': similar_products,
     })
 
+def product_list(request, category_slug=None):
+    category = None
+    categories = Category.objects.all()
+    products = Product.objects.all()
 
+    if category_slug:
+        category = Category.objects.get(slug=category_slug)
+        products = products.filter(category=category)
+
+    return render(request, 'product_list.html', {
+        'category': category,
+        'categories': categories,
+        'products': products,
+    })
 # ----------------------
 # 🛒 Cart Views
 # ----------------------
@@ -98,10 +106,11 @@ def checkout(request):
                 phone=form.cleaned_data['phone'],
             )
 
-            for item in cart_items:
+            for item in cart:
+                product = Product.objects.get(slug=item['slug'])
                 OrderItem.objects.create(
                     order=order,
-                    product=item['product'],
+                    product=product,
                     quantity=item['quantity'],
                     price=item['price']
                 )

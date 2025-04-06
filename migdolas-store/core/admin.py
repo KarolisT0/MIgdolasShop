@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Product, ProductImage, ProductVariant, Order, OrderItem
+from .models import Product, ProductImage, ProductVariant, Order, OrderItem, Category
 from django.core.mail import send_mail
 from django.conf import settings
 from django.utils.html import format_html
@@ -68,3 +68,7 @@ class ProductVariantInline(admin.TabularInline):
 class ProductAdmin(admin.ModelAdmin):
     list_display = ['name', 'price']
     inlines = [ProductImageInline, ProductVariantInline]
+
+@admin.register(Category)
+class CategoryAdmin(admin.ModelAdmin):
+    prepopulated_fields = {'slug': ('name',)}

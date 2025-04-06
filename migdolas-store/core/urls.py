@@ -8,6 +8,8 @@ urlpatterns = [
 
     # 🛒 Product-related views
     path('parduotuve/', views.product_list, name='product_list'),
+    path('parduotuve/kategorija/<slug:category_slug>/', views.product_list, name='product_list_by_category'),
+
 
     # 🛒 Cart functionality
     path('cart/', views.cart_detail, name='cart_detail'),  # ✅ Fixed view name

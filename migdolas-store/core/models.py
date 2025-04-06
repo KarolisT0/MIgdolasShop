@@ -5,6 +5,19 @@ from django.utils.crypto import get_random_string
 from tinymce.models import HTMLField
 from django.contrib.auth.models import User
 
+# -------------------
+# category
+# -------------------
+
+class Category(models.Model):
+    name = models.CharField(max_length=100)
+    slug = models.SlugField(unique=True)
+
+    class Meta:
+        verbose_name_plural = 'Categories'
+
+    def __str__(self):
+        return self.name
 
 # -------------------
 # Product
@@ -17,6 +30,8 @@ class Product(models.Model):
     image = models.ImageField(upload_to='products/')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='products', null=True, blank=True)
 
     def __str__(self):
         return self.name
