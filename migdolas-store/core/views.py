@@ -10,9 +10,9 @@ from django.http import JsonResponse
 from django.template.loader import render_to_string
 from django.core.paginator import Paginator
 
-from .models import Product, Order, OrderItem, Category
+from .models import Product, Order, OrderItem, Category, UserProfile
 from .cart import Cart
-from .forms import CheckoutForm, CustomUserCreationForm
+from .forms import CheckoutForm, CustomUserCreationForm, ProfileForm
 
 
 # ----------------------
@@ -181,7 +181,21 @@ def checkout(request):
             cart.clear()
             return redirect('order_success', order_number=order.order_number)
     else:
-        form = CheckoutForm()
+        if request.user.is_authenticated:
+            try:
+                profile = request.user.profile
+                initial_data = {
+                    'name': request.user.get_full_name(),
+                    'email': request.user.email,
+                    'address': profile.address,
+                    'phone': profile.phone,
+                }
+                form = CheckoutForm(initial=initial_data)
+            except:
+                form = CheckoutForm()
+        else:
+            form = CheckoutForm()
+
 
     return render(request, 'checkout.html', {'form': form, 'cart': cart})
 
@@ -230,6 +244,26 @@ class CustomLogoutView(View):
         messages.success(request, "Atsijungėte sėkmingai.")
         return redirect('login')  # or 'product_list' if preferred
     
+# ----------------------
+# Profile Views
+# ----------------------
+
+@login_required
+def profile_view(request):
+    # Create the profile if it doesn't exist
+    profile, created = UserProfile.objects.get_or_create(user=request.user)
+
+    if request.method == 'POST':
+        form = ProfileForm(request.POST, instance=profile)
+        if form.is_valid():
+            form.save()
+            messages.success(request, '✅ Profilis sėkmingai atnaujintas!')
+            return redirect('profile')
+        
+    else:
+        form = ProfileForm(instance=profile)
+
+    return render(request, 'registration/profile.html', {'form': form})
 # ----------------------
 # Search functionality
 # ----------------------

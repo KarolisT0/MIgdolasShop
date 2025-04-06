@@ -9,21 +9,23 @@
     <link rel="stylesheet" href="{% static 'css/base.css' %}">
 </head>  
 <body>
-    <!-- Top Contact Bar -->
-    <div class="bg-dark text-white py-1 px-3 d-flex justify-content-between align-items-center">
-        <div>
-            <small>
-                <i class="bi bi-envelope"></i> migdoloprekyba@gmail.com |
-                <i class="bi bi-telephone"></i> +370 62074262
-            </small>
+    <!-- Top Contact Bar (inserted here) -->
+    <div class="top-contact-bar bg-dark text-white py-2 shadow-sm border-bottom">
+        <div class="container d-flex justify-content-between align-items-center flex-wrap gap-2 small">
+          <div class="d-flex align-items-center gap-3">
+            <span><i class="bi bi-envelope me-1"></i> <a href="mailto:migdoloprekyba@gmail.com" class="text-white text-decoration-none">migdoloprekyba@gmail.com</a></span>
+            <span><i class="bi bi-telephone me-1"></i> <a href="tel:+37062074262" class="text-white text-decoration-none">+370 62074262</a></span>
+          </div>
+          <div>
+            <a href="https://www.facebook.com/YourPageHere" target="_blank" class="text-white text-decoration-none">
+              <i class="bi bi-facebook fs-5"></i>
+            </a>
+          </div>
         </div>
-        <div>
-            <a href="#" class="text-white me-2"><i class="bi bi-facebook"></i></a>
-        </div>
-    </div>
+      </div>
 
     <!-- Main Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark fixed-top" style="background-color: rgba(0,0,0,0.4); backdrop-filter: blur(10px);">
+    <nav class="navbar navbar-expand-lg fixed-top {% if request.path == '/' %}navbar-home{% endif %}">
         <div class="container">
             <a href="{% url 'home' %}" class="navbar-brand">
                 <img src="{% static 'images/logo.png' %}" alt="Migdolas" height="40">
@@ -90,6 +92,11 @@
                     {% if request.user.is_authenticated %}
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'order_history' %}">Mano užsakymai</a>
+                    </li>
+                    {% endif %}
+                    {% if user.is_authenticated %}
+                    <li class="nav-item">
+                    <a class="nav-link" href="{% url 'profile' %}">Profilis</a>
                     </li>
                     {% endif %}
                 </ul>

@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5">
+  <h1 class="mb-4">Mano Profilis</h1>
+
+  <div class="card mb-4">
+    <div class="card-body">
+      <h5 class="card-title">Vartotojo informacija</h5>
+      <p><strong>Vardas:</strong> {{ user.first_name }}</p>
+      <p><strong>Naudotojo vardas:</strong> {{ user.username }}</p>
+      <p><strong>El. paštas:</strong> {{ user.email }}</p>
+    </div>
+  </div>
+
+  <div class="card mb-4">
+    <div class="card-body">
+      <h5 class="card-title">Veiksmai</h5>
+      <a href="{% url 'order_history' %}" class="btn btn-outline-primary w-100 mb-2">Mano užsakymai</a>
+      <a href="{% url 'password_change' %}" class="btn btn-outline-secondary w-100">Keisti slaptažodį</a>
+    </div>
+  </div>
+
+  <div class="card mb-4">
+    <div class="card-body">
+      <h5 class="card-title">Atnaujinti profilį</h5>
+      {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-success">
+            {{ message }}
+            </div>
+        {% endfor %}
+        {% endif %}
+      <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-success">Išsaugoti</button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

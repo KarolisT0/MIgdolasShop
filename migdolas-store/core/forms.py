@@ -2,6 +2,8 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 
+from .models import UserProfile
+
 # 🛒 Checkout form
 class CheckoutForm(forms.Form):
     name = forms.CharField(max_length=100, label='Vardas')
@@ -22,3 +24,14 @@ class CustomUserCreationForm(UserCreationForm):
         if User.objects.filter(email=email).exists():
             raise forms.ValidationError("Toks el. paštas jau užregistruotas.")
         return email
+
+# Profile form
+
+class ProfileForm(forms.ModelForm):
+    class Meta:
+        model = UserProfile
+        fields = ['phone', 'address']
+        widgets = {
+            'phone': forms.TextInput(attrs={'class': 'form-control'}),
+            'address': forms.TextInput(attrs={'class': 'form-control'}),
+        }

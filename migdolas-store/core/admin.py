@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Product, ProductImage, ProductVariant, Order, OrderItem, Category
+from .models import Product, ProductImage, ProductVariant, Order, OrderItem, Category, UserProfile
 from django.core.mail import send_mail
 from django.conf import settings
 from django.utils.html import format_html
@@ -74,3 +74,7 @@ class CategoryAdmin(admin.ModelAdmin):
     list_display = ('name', 'parent')
     list_filter = ('parent',)
     search_fields = ('name',)
+
+@admin.register(UserProfile)
+class UserProfileAdmin(admin.ModelAdmin):
+    list_display = ('user', 'phone')

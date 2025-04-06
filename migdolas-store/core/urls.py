@@ -1,6 +1,6 @@
 from django.urls import path, include
 from django.contrib.auth import views as auth_views
-from .views import CustomLogoutView
+from .views import CustomLogoutView, profile_view
 from . import views
 
 urlpatterns = [
@@ -39,6 +39,10 @@ urlpatterns = [
     # orders
     path('mano-uzsakymai/', views.order_history, name='order_history'),
     path('mano-uzsakymai/<str:order_number>/', views.order_detail, name='order_detail'),
+
+    # # Profile
+    path('profilis/', profile_view, name='profile'),
+    
 
 
     path('<slug:slug>/', views.product_detail, name='product_detail'),

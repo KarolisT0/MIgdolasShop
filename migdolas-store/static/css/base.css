@@ -11,7 +11,7 @@
     opacity: 1;
     pointer-events: auto;
   }
-  
+
   /* Show submenu on hover */
   .dropdown-submenu {
     position: relative;
@@ -27,4 +27,37 @@
   
   .dropdown-submenu:hover > .dropdown-menu {
     display: block;
+  }
+
+  /* Top contact bar */
+.top-contact-bar {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1040;
+    border-bottom: none !important; /* ⬅ remove any border */
+  box-shadow: none !important;    /* ⬅ remove subtle shadow if added */
+}
+  
+  
+  /* Move navbar below contact bar */
+  .navbar.fixed-top {
+    top: 32px;
+    border-top: none !important;
+    margin-top: 0 !important;
+  }
+
+  body {
+    padding-top: 100px; /* 32px contact + ~48px navbar */
+  }
+
+  .navbar {
+    background-color: rgba(0, 0, 0, 0.6); /* Semi-transparent black */
+    backdrop-filter: blur(10px);
+    transition: background-color 0.3s ease;
+  }
+
+  .navbar-home {
+    background-color: transparent !important;
+    backdrop-filter: none !important;
   }
