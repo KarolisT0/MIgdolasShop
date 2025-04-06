@@ -41,6 +41,28 @@
   </div>
 </div>
 
+<div class="dropdown mb-4">
+    <button class="btn btn-outline-dark dropdown-toggle" type="button" id="categoryMenu" data-bs-toggle="dropdown" aria-expanded="false">
+      Pasirinkite kategoriją
+    </button>
+    <ul class="dropdown-menu" aria-labelledby="categoryMenu">
+      {% for cat in categories %}
+        <li class="dropdown-submenu position-relative">
+          <a class="dropdown-item dropdown-toggle" href="{% url 'product_list_by_category' cat.slug %}">
+            {{ cat.name }}
+          </a>
+          {% if cat.subcategories.all %}
+            <ul class="dropdown-menu">
+              {% for sub in cat.subcategories.all %}
+                <li><a class="dropdown-item" href="{% url 'product_list_by_category' sub.slug %}">{{ sub.name }}</a></li>
+              {% endfor %}
+            </ul>
+          {% endif %}
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
+
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
   let selectedCategory = "";

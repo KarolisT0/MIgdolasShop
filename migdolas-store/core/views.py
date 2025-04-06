@@ -32,16 +32,23 @@ def product_detail(request, slug):
         'similar_products': similar_products,
     })
 
-def product_list(request, category_slug=None):
+def product_list(request, category_slug=None, subcategory_slug=None):
     category = None
-    categories = Category.objects.all()
+    subcategory = None
+    categories = Category.objects.filter(parent__isnull=True).prefetch_related('subcategories')
     products = Product.objects.all()
 
+    # Filter by category
     if category_slug:
-        category = Category.objects.get(slug=category_slug)
-        products = products.filter(category=category)
+        category = get_object_or_404(Category, slug=category_slug, parent__isnull=True)
+        products = products.filter(category__in=[category] + list(category.subcategories.all()))
 
-    # Price filtering with variant range logic
+    # Filter by subcategory
+    if category_slug and subcategory_slug:
+        subcategory = get_object_or_404(Category, slug=subcategory_slug, parent=category)
+        products = products.filter(category=subcategory)
+
+    # Filters
     min_price = request.GET.get('min_price')
     max_price = request.GET.get('max_price')
     q = request.GET.get('q')
@@ -50,25 +57,26 @@ def product_list(request, category_slug=None):
         try:
             min_price = float(min_price)
             max_price = float(max_price)
-
             filtered_products = []
             for product in products:
                 price_min, price_max = get_price_range(product)
                 if price_max >= min_price and price_min <= max_price:
                     filtered_products.append(product)
-
             products = filtered_products
         except ValueError:
-            pass  # Ignore invalid filter input
-    if q:
-        products = products.filter(name__icontains=q)
+            pass  # Invalid price input
 
+    if q:
+        products = [p for p in products if q.lower() in p.name.lower()]
+
+    # Pagination
     paginator = Paginator(products, 9)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
     context = {
         'category': category,
+        'subcategory': subcategory,
         'categories': categories,
         'products': products,
         'min_price': min_price or '',
@@ -76,6 +84,7 @@ def product_list(request, category_slug=None):
         'q': q or '',
         'page_obj': page_obj,
     }
+
     return render(request, 'product_list.html', context)
 
 def get_price_range(self):

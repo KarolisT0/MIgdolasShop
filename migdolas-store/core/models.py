@@ -12,6 +12,12 @@ from django.contrib.auth.models import User
 class Category(models.Model):
     name = models.CharField(max_length=100)
     slug = models.SlugField(unique=True)
+    parent = models.ForeignKey('self', null=True, blank=True, related_name='subcategories', on_delete=models.CASCADE)
+
+    def category_context(request):
+        return {
+            'categories': Category.objects.filter(parent__isnull=True).prefetch_related('subcategories')
+    }
 
     class Meta:
         verbose_name_plural = 'Categories'
