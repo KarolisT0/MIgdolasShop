@@ -7,6 +7,8 @@
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+
 </head>
 <style> 
   body {
@@ -68,8 +70,9 @@
                 </ul>
               </li>
       
-              <li class="nav-item"><a class="nav-link" href="{% url 'apie_mus' %}">Apie mus</a></li>
-              <li class="nav-item"><a class="nav-link" href="#">Kontaktai</a></li>
+              <li class="nav-item"><a class="nav-link" href="{% url 'about' %}">Apie mus</a></li>
+              <li class="nav-item"><a class="nav-link" href="{% url 'contacts' %}">Kontaktai</a></li>
+
       
               <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="dukDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">

@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container my-5">
+  <div class="bg-white p-4 p-md-5 rounded shadow">
+
+      <!-- Title -->
+      <h2 class="text-center fw-bold mb-5">KONTAKTAI</h2>
+
+      <!-- Icon Row -->
+      <div class="bg-light py-4 rounded-3 mb-5">
+        <div class="row text-center">
+          <div class="col-md-4 mb-3">
+            <div class="d-flex flex-column align-items-center">
+              <i class="bi bi-telephone-fill fs-2 text-secondary mb-2"></i>
+              <a href="tel:+37062074262" class="text-decoration-none text-dark fw-semibold">
+                +37062074262
+              </a>
+            </div>
+          </div>
+          <div class="col-md-4 mb-3">
+            <div class="d-flex flex-column align-items-center">
+              <i class="bi bi-envelope-fill fs-2 text-secondary mb-2"></i>
+              <a href="mailto:migdoloprekyba@gmail.com" class="text-decoration-none text-dark fw-semibold">
+                migdoloprekyba@gmail.com
+              </a>
+            </div>
+          </div>
+          <div class="col-md-4 mb-3">
+            <div class="d-flex flex-column align-items-center">
+              <i class="bi bi-facebook fs-2 text-secondary mb-2"></i>
+              <a href="https://facebook.com" class="text-decoration-none text-dark fw-semibold" target="_blank">
+                Migdolas – baldų parduotuvės
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section Title -->
+      <h3 class="text-center fw-bold mt-5">BALDŲ SALONAI</h3>
+
+      <!-- Šiauliai -->
+      <div class="mt-5">
+        <h5 class="text-center fw-bold">ŠIAULIUOSE</h5>
+        <p class="text-center">
+          Pramonės g. 21c, prekybos centras „KUBAS“, 2 aukštas.<br>
+          Dirbame: I–V 9:00–18:00, VI 9:00–15:00<br>
+          Tel: <a href="tel:+37061843921">+37061843921</a><br>
+          El.paštas: <a href="mailto:siauliamigdolas@gmail.com">siauliamigdolas@gmail.com</a>
+        </p>
+
+        <div class="map-photo-box text-center mb-4" style="max-width: 600px; margin: 0 auto;">
+          <img src="{% static 'images/siauliai-migdolas.jpg' %}" alt="Migdolas - Šiauliai" class="img-fluid mb-3 rounded">
+          <iframe
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2284.7296924621575!2d23.3280242!3d55.9145366!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x46e760b9b4d6a9d3%3A0x6c225d2df84e243e!2sPramon%C4%97s%20g.%2021C%2C%20%C5%A0iauliai%2078136!5e0!3m2!1sen!2slt!4v1688550461089!5m2!1sen!2slt"
+            width="100%" height="350" style="border:0;" allowfullscreen loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+          ></iframe>
+        </div>
+      </div>
+
+      <!-- Alytus -->
+      <div class="mt-5">
+        <h5 class="text-center fw-bold">ALYTUJE</h5>
+        <p class="text-center">
+          Ūdrijos g. 2 (antras aukštas)<br>
+          Dirbame: I–V 9:00–18:00, VI 9:00–14:00<br>
+          Tel: <a href="tel:+37062019795">+37062019795</a><br>
+          El.paštas: <a href="mailto:alytusmigdolas@gmail.com">alytusmigdolas@gmail.com</a>
+        </p>
+
+        <div class="map-photo-box text-center mb-4" style="max-width: 600px; margin: 0 auto;">
+          <img src="{% static 'images/alytus-migdolas.jpg' %}" alt="Migdolas - Alytus" class="img-fluid mb-3 rounded">
+          <iframe
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2296.905054895719!2d23.138470677080587!3d54.39252157256419!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x46e72c7b95c22f37%3A0xb648cf5c51b5aef4!2s%C5%AEdrijos%20g.%202%2C%20Alytus%2C%20Lithuania!5e0!3m2!1sen!2slt!4v1712482459181!5m2!1sen!2slt"
+            width="100%" height="350" style="border:0;" allowfullscreen loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+          ></iframe>
+        </div>
+      </div>
+
+      <!-- Kaunas -->
+      <div class="mt-5">
+        <h5 class="text-center fw-bold">KAUNE</h5>
+        <p class="text-center">
+          Baltų pr. 40<br>
+          Dirbame: I–V 10:00–18:00, VI 10:00–15:00<br>
+          Tel: <a href="tel:+37062079392">+37062079392</a><br>
+          El.paštas: <a href="mailto:adilgenta@gmail.com">adilgenta@gmail.com</a>
+        </p>
+
+        <div class="map-photo-box text-center mb-4" style="max-width: 600px; margin: 0 auto;">
+          <img src="{% static 'images/kaunas-migdolas.jpg' %}" alt="Migdolas - Kaunas" class="img-fluid mb-3 rounded">
+          <iframe
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2296.195653437838!2d23.838738377083573!3d54.40357677256821!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x46e72203509c21ed%3A0xa2b29aa7d636f5a8!2sBalt%C5%B3%20pr.%2040%2C%20Kaunas%2C%20Lithuania!5e0!3m2!1sen!2slt!4v1712485068099!5m2!1sen!2slt"
+            width="100%" height="350" style="border:0;" allowfullscreen loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+          ></iframe>
+        </div>
+      </div>
+
+    </div> <!-- /.bg-white -->
+  </div> <!-- /.container -->
+</div>
+{% endblock %}

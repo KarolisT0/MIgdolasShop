@@ -309,5 +309,8 @@ def ajax_product_search(request):
 
 from django.shortcuts import render
 
-def apie_mus(request):
+def about(request):
     return render(request, 'about.html')
+
+def contacts_view(request):
+    return render(request, 'contacts.html')

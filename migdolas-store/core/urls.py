@@ -45,6 +45,7 @@ urlpatterns = [
 
     # Other pages
     path('apie-mus/', views.about, name='about'),
+    path('kontaktai/', views.contacts_view, name='contacts'),
     
 
 
