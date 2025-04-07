@@ -1,38 +1,27 @@
-{% for product in page_obj %}
+{% for product in products %}
   <div class="col-md-6 col-lg-4 mb-4">
     <div class="card h-100 shadow-sm">
       <a href="{% url 'product_detail' slug=product.slug %}">
         <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}">
       </a>
-      <div class="card-body">
-        <h5 class="card-title">
-          <a href="{% url 'product_detail' slug=product.slug %}" class="text-decoration-none text-dark">
-            {{ product.name }}
-          </a>
-        </h5>
+      <div class="card-body d-flex flex-column">
+        <h5 class="card-title">{{ product.name }}</h5>
         <p class="card-text">{{ product.description|truncatechars_html:150|safe }}</p>
-
         {% with min_price=product.get_price_range.0 max_price=product.get_price_range.1 %}
-          {% if min_price and max_price %}
-            {% if min_price == max_price %}
-              <p class="fw-bold">€{{ min_price }}</p>
-            {% else %}
-              <p class="fw-bold">€{{ min_price }} – €{{ max_price }}</p>
-            {% endif %}
+          {% if min_price == max_price %}
+            <p class="fw-bold">€{{ min_price }}</p>
           {% else %}
-            <p class="fw-bold">€{{ product.price }}</p>
+            <p class="fw-bold">€{{ min_price }} – €{{ max_price }}</p>
           {% endif %}
         {% endwith %}
-
-        <a href="{% url 'product_detail' slug=product.slug %}" class="btn btn-outline-primary w-100">Peržiūrėti</a>
+        <a href="{% url 'product_detail' slug=product.slug %}" class="btn btn-outline-primary mt-auto">Peržiūrėti</a>
       </div>
     </div>
   </div>
 {% empty %}
-  <div class="col-12">
-    <p>Nėra prekių šioje kategorijoje.</p>
-  </div>
+  <div class="col-12"><p>Nerasta prekių pagal jūsų kriterijus.</p></div>
 {% endfor %}
+
 
 <!-- 🔽 Pagination Links -->
 {% if page_obj.paginator.num_pages > 1 %}

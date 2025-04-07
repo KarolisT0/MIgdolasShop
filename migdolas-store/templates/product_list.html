@@ -6,34 +6,52 @@
   <h2 class="mb-4">Mūsų Baldai</h2>
   <div class="row">
     
-    <!-- Sidebar: Categories + Filters -->
-    <div class="col-md-3 mb-4">
-      <h5>Kategorijos</h5>
-      <ul class="list-group mb-4">
-        <li class="list-group-item {% if not category %}active{% endif %}" data-category="">
-          <a href="#" class="text-decoration-none category-link">Visos</a>
-        </li>
-        {% for cat in categories %}
-        <li class="list-group-item {% if cat == category %}active{% endif %}" data-category="{{ cat.slug }}">
-          <a href="#" class="text-decoration-none category-link">{{ cat.name }}</a>
-        </li>
-        {% endfor %}
-      </ul>
+    <!-- Sidebar (Filter Panel) -->
+    <div class="col-md-4 col-lg-3 mb-4">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <!-- Category Dropdown -->
+          <div class="dropdown mb-3">
+            <button class="btn btn-outline-dark dropdown-toggle w-100" type="button" id="categoryMenu" data-bs-toggle="dropdown" aria-expanded="false">
+              Pasirinkite kategoriją
+            </button>
+            <ul class="dropdown-menu w-100" aria-labelledby="categoryMenu">
+              <li><a href="#" class="dropdown-item category-link" data-category="">Rodyti visus</a></li>
+              <li><hr class="dropdown-divider"></li>
+              {% for cat in categories %}
+                <li class="dropdown-submenu position-relative">
+                  <a href="#" class="dropdown-item dropdown-toggle category-link" data-category="{{ cat.slug }}">{{ cat.name }}</a>
+                  {% if cat.subcategories.all %}
+                    <ul class="dropdown-menu">
+                      {% for sub in cat.subcategories.all %}
+                        <li><a href="#" class="dropdown-item category-link" data-category="{{ sub.slug }}">{{ sub.name }}</a></li>
+                      {% endfor %}
+                    </ul>
+                  {% endif %}
+                </li>
+              {% endfor %}
+            </ul>
+          </div>
 
-      <h5>Kaina (€)</h5>
-      <div class="mb-3">
-        <input type="number" id="minPrice" class="form-control mb-2" placeholder="Nuo">
-        <input type="number" id="maxPrice" class="form-control" placeholder="Iki">
+          <!-- Price Filter -->
+          <h5>Kaina (€)</h5>
+          <div class="row mb-3">
+            <div class="col"><input type="number" id="minPrice" class="form-control" placeholder="Nuo"></div>
+            <div class="col"><input type="number" id="maxPrice" class="form-control" placeholder="Iki"></div>
+          </div>
+
+          <!-- Search -->
+          <h5>Ieškoti</h5>
+          <input type="text" id="searchInput" class="form-control mb-3" placeholder="Ieškoti baldų...">
+
+          <button id="filterButton" class="btn btn-primary w-100">Filtruoti</button>
+          <button id="clearFilters" class="btn btn-outline-secondary w-100 mt-2">Išvalyti filtrus</button>
+        </div>
       </div>
-
-      <h5>Ieškoti</h5>
-      <input type="text" id="searchInput" class="form-control mb-2" placeholder="Ieškoti baldų...">
-      
-      <button id="filterButton" class="btn btn-primary w-100">Filtruoti</button>
     </div>
 
-    <!-- Main Content: Products -->
-    <div class="col-md-9">
+    <!-- Product Grid -->
+    <div class="col-md-8 col-lg-9">
       <div class="row" id="productResults">
         {% include 'partials/_product_cards.html' %}
       </div>
@@ -41,28 +59,7 @@
   </div>
 </div>
 
-<div class="dropdown mb-4">
-    <button class="btn btn-outline-dark dropdown-toggle" type="button" id="categoryMenu" data-bs-toggle="dropdown" aria-expanded="false">
-      Pasirinkite kategoriją
-    </button>
-    <ul class="dropdown-menu" aria-labelledby="categoryMenu">
-      {% for cat in categories %}
-        <li class="dropdown-submenu position-relative">
-          <a class="dropdown-item dropdown-toggle" href="{% url 'product_list_by_category' cat.slug %}">
-            {{ cat.name }}
-          </a>
-          {% if cat.subcategories.all %}
-            <ul class="dropdown-menu">
-              {% for sub in cat.subcategories.all %}
-                <li><a class="dropdown-item" href="{% url 'product_list_by_category' sub.slug %}">{{ sub.name }}</a></li>
-              {% endfor %}
-            </ul>
-          {% endif %}
-        </li>
-      {% endfor %}
-    </ul>
-  </div>
-
+<!-- jQuery + AJAX -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
   let selectedCategory = "";
@@ -92,12 +89,22 @@
 
   $('.category-link').on('click', function (e) {
     e.preventDefault();
-    selectedCategory = $(this).closest('li').data('category');
-
-    $('.list-group-item').removeClass('active');
-    $(this).closest('li').addClass('active');
-
+    selectedCategory = $(this).data('category');
+    $('.category-link').removeClass('active');
+    $(this).addClass('active');
     fetchFilteredProducts();
+    
   });
+  
+  $('#clearFilters').on('click', function () {
+  $('#searchInput').val('');
+  $('#minPrice').val('');
+  $('#maxPrice').val('');
+  selectedCategory = "";
+
+  $('.category-link').removeClass('active');
+  fetchFilteredProducts();
+});
 </script>
 {% endblock %}
+

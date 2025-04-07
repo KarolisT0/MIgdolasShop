@@ -1,63 +1,115 @@
-/* Mega menu width */
-.mega-menu {
-    width: 600px;
-    padding: 20px;
-    transition: opacity 0.2s ease-in-out;
-    opacity: 0;
-    pointer-events: none;
-  }
-  
-  .dropdown-menu.show {
-    opacity: 1;
-    pointer-events: auto;
+html, body {
+    margin: 0;
+    padding: 0;
   }
 
-  /* Show submenu on hover */
-  .dropdown-submenu {
-    position: relative;
-  }
-  
-  .dropdown-submenu > .dropdown-menu {
-    top: 0;
-    left: 100%;
-    margin-top: -1px;
-    display: none;
-    position: absolute;
-  }
-  
-  .dropdown-submenu:hover > .dropdown-menu {
-    display: block;
-  }
-
-  /* Top contact bar */
+/* Top contact bar (no changes if you like current style) */
 .top-contact-bar {
     position: fixed;
     top: 0;
     width: 100%;
     z-index: 1040;
-    border-bottom: none !important; /* ⬅ remove any border */
-  box-shadow: none !important;    /* ⬅ remove subtle shadow if added */
-}
-  
+    font-size: 14px;
+    background-color: #111; /* Darker and cleaner */
+    color: white;
+    border-bottom: none !important;
+    box-shadow: none !important;
+  }
   
   /* Move navbar below contact bar */
   .navbar.fixed-top {
     top: 32px;
-    border-top: none !important;
+    border: none;
     margin-top: 0 !important;
-  }
+    border-top: none !important;
 
+  }
+  
+  /* Main layout padding */
   body {
-    padding-top: 100px; /* 32px contact + ~48px navbar */
+    padding-top: 100px; /* Adjusted for top bar + navbar */
+    background: linear-gradient(to bottom, #fafafa, #f0f0f0);
+    background-image: url("{% static 'images/light-noise.png' %}");
+    background-blend-mode: overlay;
+    background-size: cover;
   }
-
+  
+  /* Navbar general style */
   .navbar {
-    background-color: rgba(0, 0, 0, 0.6); /* Semi-transparent black */
+    background-color: rgba(0, 0, 0, 0.6);
     backdrop-filter: blur(10px);
     transition: background-color 0.3s ease;
   }
-
+  
   .navbar-home {
     background-color: transparent !important;
     backdrop-filter: none !important;
+  }
+  
+  /* Navigation links */
+  .navbar .nav-link {
+    color: #fff !important;
+    font-weight: 600;
+    padding: 10px 15px;
+    transition: all 0.3s ease;
+  }
+  
+  .navbar .nav-link:hover,
+  .navbar .nav-link:focus {
+    color: #f0c040 !important;
+    background-color: transparent;
+    text-decoration: none;
+  }
+  
+  /* Dropdown styling */
+  .dropdown-menu {
+    background-color: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(8px);
+    border: none;
+    border-radius: 10px;
+    padding: 0.5rem 0;
+    min-width: 200px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    animation: fadeIn 0.3s ease-in-out;
+  }
+  
+  .dropdown-item {
+    color: #fff;
+    padding: 0.5rem 1.5rem;
+    transition: background-color 0.2s ease;
+  }
+  
+  .dropdown-item:hover {
+    background-color: rgba(255, 255, 255, 0.1); /* subtle hover effect */
+    color: #fff;
+  }
+
+  .dropdown-submenu .dropdown-menu {
+    top: 0;
+    left: 100%;
+    margin-left: 0.1rem;
+    margin-top: -0.5rem;
+  }
+  
+  /* Submenu indicator */
+  .dropdown-submenu > .dropdown-toggle::after {
+    transform: rotate(-90deg);
+    margin-left: 0.5rem;
+  }
+  
+  /* Fade-in animation */
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(5px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .card:hover {
+    transform: scale(1.01);
+    transition: all 0.3s ease;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  }
+
+  .card-img-top {
+    height: 200px;
+    object-fit: cover;
   }

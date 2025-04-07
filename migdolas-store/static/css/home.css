@@ -13,7 +13,7 @@ body, html {
     display: flex;
     align-items: flex-start;   /* Align content near the top */
     justify-content: center;
-    position: relative;
+    position: relative; 
   }
   
   /* Overlay to darken the background */
