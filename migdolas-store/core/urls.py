@@ -42,6 +42,9 @@ urlpatterns = [
 
     # # Profile
     path('profilis/', profile_view, name='profile'),
+
+    # Other pages
+    path('apie-mus/', views.about, name='about'),
     
 
 

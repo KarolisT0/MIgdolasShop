@@ -302,3 +302,12 @@ def ajax_product_search(request):
 
     html = render_to_string('partials/_product_cards.html', {'products': filtered_products})
     return JsonResponse({'html': html})
+
+# ----------------------
+# other views
+# ----------------------
+
+from django.shortcuts import render
+
+def apie_mus(request):
+    return render(request, 'about.html')
