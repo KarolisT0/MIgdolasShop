@@ -250,18 +250,24 @@ class CustomLogoutView(View):
 
 @login_required
 def profile_view(request):
-    # Create the profile if it doesn't exist
-    profile, created = UserProfile.objects.get_or_create(user=request.user)
+    user = request.user
+    profile, created = UserProfile.objects.get_or_create(user=user)
 
     if request.method == 'POST':
         form = ProfileForm(request.POST, instance=profile)
         if form.is_valid():
-            form.save()
-            messages.success(request, '✅ Profilis sėkmingai atnaujintas!')
+            profile = form.save(commit=False)
+            user.first_name = form.cleaned_data.get('first_name')
+            user.last_name = form.cleaned_data.get('last_name')
+            user.save()
+            profile.save()
+            messages.success(request, 'Profilis atnaujintas sėkmingai.')
             return redirect('profile')
-        
     else:
-        form = ProfileForm(instance=profile)
+        form = ProfileForm(instance=profile, initial={
+            'first_name': user.first_name,
+            'last_name': user.last_name,
+        })
 
     return render(request, 'registration/profile.html', {'form': form})
 # ----------------------

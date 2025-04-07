@@ -10,6 +10,7 @@ html, body {
     width: 100%;
     z-index: 1040;
     font-size: 14px;
+    line-height: 1;
     background-color: #111; /* Darker and cleaner */
     color: white;
     border-bottom: none !important;
@@ -20,8 +21,6 @@ html, body {
   .navbar.fixed-top {
     top: 32px;
     border: none;
-    margin-top: 0 !important;
-    border-top: none !important;
 
   }
   
@@ -31,6 +30,7 @@ html, body {
     background: linear-gradient(to bottom, #fafafa, #f0f0f0);
     background-image: url("{% static 'images/light-noise.png' %}");
     background-blend-mode: overlay;
+    height: 100%;
     background-size: cover;
   }
   
@@ -112,4 +112,9 @@ html, body {
   .card-img-top {
     height: 200px;
     object-fit: cover;
+  }
+
+  footer {
+    font-size: 14px;
+    color: #000;
   }

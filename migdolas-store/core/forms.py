@@ -28,6 +28,9 @@ class CustomUserCreationForm(UserCreationForm):
 # Profile form
 
 class ProfileForm(forms.ModelForm):
+    first_name = forms.CharField(max_length=30, required=False, label='Vardas', widget=forms.TextInput(attrs={'class': 'form-control'}))
+    last_name = forms.CharField(max_length=30, required=False, label='Pavardė', widget=forms.TextInput(attrs={'class': 'form-control'}))
+
     class Meta:
         model = UserProfile
         fields = ['phone', 'address']
