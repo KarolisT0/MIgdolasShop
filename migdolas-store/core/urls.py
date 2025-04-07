@@ -28,7 +28,6 @@ urlpatterns = [
 
     # # 🔒 Authentication
     path('register/', views.register, name='register'),
-    path('accounts/', include('django.contrib.auth.urls')),
     path('login/', auth_views.LoginView.as_view(template_name='registration/login.html'), name='login'),
     path('logout/', CustomLogoutView.as_view(), name='logout'),
     path('password-reset/', auth_views.PasswordResetView.as_view(), name='password_reset'),

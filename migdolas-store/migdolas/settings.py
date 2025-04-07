@@ -147,4 +147,5 @@ ADMIN_EMAIL = 'karolistomkus13@gmail.com'
 
 # login settings
 LOGIN_URL = 'login'
+LOGIN_REDIRECT_URL = '/profilis'
 LOGOUT_REDIRECT_URL = 'product_list'
