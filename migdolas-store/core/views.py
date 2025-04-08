@@ -162,7 +162,7 @@ def checkout(request):
                     quantity=item['quantity'],
                     price=item['price']
                 )
-
+                
             send_mail(
                 subject=f"Užsakymas patvirtintas – {order.order_number}",
                 message=(
