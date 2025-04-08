@@ -4,7 +4,6 @@
 <head>
     <meta charset="UTF-8">
     <title>Migdolas</title>
-    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'css/base.css' %}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
@@ -63,7 +62,9 @@
                     {% if category.subcategories.all %}
                     <ul class="dropdown-menu">
                       {% for sub in category.subcategories.all %}
-                      <li><a class="dropdown-item" href="{% url 'product_list_by_category' sub.slug %}">{{ sub.name }}</a></li>
+                      <li><a class="dropdown-item" href="{% url 'product_list_by_subcategory' cat.slug sub.slug %}">
+                        {{ sub.name }}
+                      </a></li>
                       {% endfor %}
                     </ul>
                     {% endif %}

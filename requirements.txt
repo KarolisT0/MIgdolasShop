@@ -1,5 +1,6 @@
 Django>=5.2,<5.3
 python-decouple
 psycopg2-binary
+Pillow
 django-widget-tweaks
 django-tinymce

@@ -12,6 +12,7 @@ urlpatterns = [
     path('parduotuve/<slug:category_slug>/<slug:subcategory_slug>/', views.product_list, name='product_list_by_subcategory'),
 
 
+
     # 🛒 Cart functionality
     path('cart/', views.cart_detail, name='cart_detail'),  # ✅ Fixed view name
     path('cart/add/<int:product_id>/', views.add_to_cart, name='add_to_cart'),

@@ -93,18 +93,7 @@
     $('.category-link').removeClass('active');
     $(this).addClass('active');
     fetchFilteredProducts();
-    
   });
-  
-  $('#clearFilters').on('click', function () {
-  $('#searchInput').val('');
-  $('#minPrice').val('');
-  $('#maxPrice').val('');
-  selectedCategory = "";
-
-  $('.category-link').removeClass('active');
-  fetchFilteredProducts();
-});
 </script>
 {% endblock %}
 
