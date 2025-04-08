@@ -62,7 +62,7 @@
                     {% if category.subcategories.all %}
                     <ul class="dropdown-menu">
                       {% for sub in category.subcategories.all %}
-                      <li><a class="dropdown-item" href="{% url 'product_list_by_subcategory' cat.slug sub.slug %}">
+                      <li><a class="dropdown-item" href="{% url 'product_list_by_subcategory' category.slug sub.slug %}">                        
                         {{ sub.name }}
                       </a></li>
                       {% endfor %}
