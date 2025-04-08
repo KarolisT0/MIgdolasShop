@@ -2,6 +2,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.views.decorators.http import require_POST
 from django.conf import settings
 from django.contrib.auth import login, logout
+from django.contrib.auth.views import LoginView
 from django.contrib import messages
 from django.core.mail import send_mail
 from django.contrib.auth.decorators import login_required
@@ -12,7 +13,7 @@ from django.core.paginator import Paginator
 
 from .models import Product, Order, OrderItem, Category, UserProfile
 from .cart import Cart
-from .forms import CheckoutForm, CustomUserCreationForm, ProfileForm
+from .forms import CheckoutForm, CustomUserCreationForm, ProfileForm, CustomLoginForm
 
 
 # ----------------------
@@ -243,6 +244,10 @@ class CustomLogoutView(View):
         logout(request)
         messages.success(request, "Atsijungėte sėkmingai.")
         return redirect('login')  # or 'product_list' if preferred
+    
+class CustomLoginView(LoginView):
+    authentication_form = CustomLoginForm
+    template_name = 'registration/login.html'
     
 # ----------------------
 # Profile Views
