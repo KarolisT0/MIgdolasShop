@@ -11,7 +11,7 @@ from django.contrib.auth.models import User
 
 class Category(models.Model):
     name = models.CharField(max_length=100)
-    slug = models.SlugField(unique=True)
+    slug = models.SlugField()
     parent = models.ForeignKey('self', null=True, blank=True, related_name='subcategories', on_delete=models.CASCADE)
 
     def category_context(request):
@@ -20,6 +20,7 @@ class Category(models.Model):
     }
 
     class Meta:
+        unique_together = ('slug', 'parent')
         verbose_name_plural = 'Categories'
 
     def __str__(self):

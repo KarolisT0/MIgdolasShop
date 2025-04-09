@@ -325,3 +325,6 @@ def about(request):
 
 def contacts_view(request):
     return render(request, 'contacts.html')
+
+def cleaning_view(request):
+    return render(request, 'cleaning.html')

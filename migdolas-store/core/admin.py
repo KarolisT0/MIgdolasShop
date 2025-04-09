@@ -74,6 +74,7 @@ class CategoryAdmin(admin.ModelAdmin):
     list_display = ('name', 'parent')
     list_filter = ('parent',)
     search_fields = ('name',)
+    prepopulated_fields = {"slug": ("name",)}
 
 @admin.register(UserProfile)
 class UserProfileAdmin(admin.ModelAdmin):
