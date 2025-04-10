@@ -121,3 +121,10 @@ html, body {
     color: #000;
   }
 
+  .card,
+  .card-body,
+  .col-md-4 {
+      position: relative;
+      overflow: visible !important;
+  }
+  
