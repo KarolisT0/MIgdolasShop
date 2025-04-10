@@ -14,7 +14,7 @@
 <div class="container">
   <h2 class="text-center mb-4">Naujausi produktai</h2>
   <div class="row">
-    {% for product in products| slice:":3" %}
+    {% for product in products %}
       <div class="col-md-4 mb-4">
         <div class="card h-100 shadow-sm">
           <a href="{% url 'product_detail' slug=product.slug %}">
