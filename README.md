@@ -79,6 +79,16 @@ http://localhost:8000/admin/
 
 ```
 
+
+
+## 🧪 Testing
+
+Live example of project
+
+http://13.53.40.62/
+
+
+
 ## 🙋 Author
 
 
