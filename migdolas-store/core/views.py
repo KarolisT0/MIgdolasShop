@@ -50,6 +50,7 @@ def product_list(request, category_slug=None, subcategory_slug=None):
         products = products.filter(category=subcategory)
 
     # Filters
+
     min_price = request.GET.get('min_price')
     max_price = request.GET.get('max_price')
     q = request.GET.get('q')
@@ -65,12 +66,13 @@ def product_list(request, category_slug=None, subcategory_slug=None):
                     filtered_products.append(product)
             products = filtered_products
         except ValueError:
-            pass  # Invalid price input
+            pass 
 
     if q:
         products = [p for p in products if q.lower() in p.name.lower()]
 
-    # Pagination
+    # Paginator
+
     paginator = Paginator(products, 9)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
@@ -228,7 +230,7 @@ def order_history(request):
 
 def register(request):
     if request.user.is_authenticated:
-        return redirect('product_list')  # or another home page
+        return redirect('product_list')
     form = CustomUserCreationForm()
     if request.method == 'POST':
         form = CustomUserCreationForm(request.POST)
@@ -243,7 +245,7 @@ class CustomLogoutView(View):
     def get(self, request):
         logout(request)
         messages.success(request, "Atsijungėte sėkmingai.")
-        return redirect('login')  # or 'product_list' if preferred
+        return redirect('login')
     
 class CustomLoginView(LoginView):
     authentication_form = CustomLoginForm
@@ -315,7 +317,7 @@ def ajax_product_search(request):
     return JsonResponse({'html': html})
 
 # ----------------------
-# other views
+# Other views
 # ----------------------
 
 from django.shortcuts import render

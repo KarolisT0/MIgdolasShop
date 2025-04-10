@@ -37,11 +37,11 @@ class Cart:
         self.session.modified = True
 
     def __iter__(self):
-        from .models import Product  # lazy import to avoid circular error
+        from .models import Product 
 
         for product_id, item in self.cart.items():
             product = Product.objects.get(id=product_id)
-            item['id'] = product_id  # ✅ Add this line
+            item['id'] = product_id 
             item['product_obj'] = product
             item['total'] = float(item['price']) * item['quantity']
             yield item

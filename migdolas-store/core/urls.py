@@ -14,7 +14,7 @@ urlpatterns = [
 
 
     # 🛒 Cart functionality
-    path('vezimelis/', views.cart_detail, name='cart_detail'),  # ✅ Fixed view name
+    path('vezimelis/', views.cart_detail, name='cart_detail'),
     path('cart/add/<int:product_id>/', views.add_to_cart, name='add_to_cart'),
     path('cart/remove/<int:product_id>/', views.remove_from_cart, name='remove_from_cart'),
     path('cart/update/<int:product_id>/', views.update_cart, name='update_cart'),
@@ -36,14 +36,14 @@ urlpatterns = [
     path('reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
     path('reset/done/', auth_views.PasswordResetCompleteView.as_view(), name='password_reset_complete'),
 
-    # orders
+    # # Orders
     path('mano-uzsakymai/', views.order_history, name='order_history'),
     path('mano-uzsakymai/<str:order_number>/', views.order_detail, name='order_detail'),
 
     # # Profile
     path('profilis/', profile_view, name='profile'),
 
-    # Other pages
+    #  # Other pages
     path('apie-mus/', views.about, name='about'),
     path('kontaktai/', views.contacts_view, name='contacts'),
     path('baldu-prieziura/', views.cleaning_view, name='cleaning'),

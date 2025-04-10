@@ -6,7 +6,7 @@ from tinymce.models import HTMLField
 from django.contrib.auth.models import User
 
 # -------------------
-# category
+# Category
 # -------------------
 
 class Category(models.Model):

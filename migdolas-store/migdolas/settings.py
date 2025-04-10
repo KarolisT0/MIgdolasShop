@@ -145,7 +145,7 @@ EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
 DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL')
 ADMIN_EMAIL = config('ADMIN_EMAIL')
 
-# login settings
+# Login settings
 LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = '/profilis'
 LOGOUT_REDIRECT_URL = 'product_list'

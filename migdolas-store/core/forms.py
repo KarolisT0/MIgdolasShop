@@ -11,7 +11,7 @@ class CheckoutForm(forms.Form):
     address = forms.CharField(widget=forms.Textarea, label='Adresas')
     phone = forms.CharField(max_length=20, label='Telefonas (nebūtina)', required=False)
 
-# authentication form
+# Authentication form
 class CustomUserCreationForm(UserCreationForm):
     email = forms.EmailField(required=True, label='El. paštas')
 
