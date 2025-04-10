@@ -66,6 +66,7 @@ html, body {
     background-color: rgba(0, 0, 0, 0.7);
     backdrop-filter: blur(8px);
     border: none;
+    z-index: 1050 !important;
     border-radius: 10px;
     padding: 0.5rem 0;
     min-width: 200px;
@@ -89,6 +90,7 @@ html, body {
     left: 100%;
     margin-left: 0.1rem;
     margin-top: -0.5rem;
+    z-index: 1051 !important;
   }
   
   /* Submenu indicator */
@@ -118,3 +120,4 @@ html, body {
     font-size: 14px;
     color: #000;
   }
+
